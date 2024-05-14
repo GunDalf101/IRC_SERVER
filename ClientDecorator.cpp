@@ -13,8 +13,10 @@ AuthenticatedClient::AuthenticatedClient(IRCClient *client) : IRCClient(client->
     this->setNickname(client->getNickname());
     this->setUsername(client->getUsername());
     this->setPassword(client->getPassword());
+    this->setAuthentificated(true);
 }
 
 AuthenticatedClient::~AuthenticatedClient()
 {
+    delete wrappedClient;
 }

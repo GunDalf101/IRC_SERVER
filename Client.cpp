@@ -5,6 +5,7 @@ IRCClient::IRCClient(int client_fd) {
     this->nickname = "";
     this->username = "";
     this->password = "";
+    this->authentificated = false;
 }
 
 IRCClient::~IRCClient() {

@@ -7,6 +7,7 @@ class IRCClient {
         std::string nickname;
         std::string username;
         std::string password;
+        bool authentificated;
     public:
         IRCClient(int client_fd);
         virtual ~IRCClient();
@@ -18,6 +19,7 @@ class IRCClient {
         void setNickname(std::string nickname) { this->nickname = nickname; }
         void setUsername(std::string username) { this->username = username; }
         void setPassword(std::string password) { this->password = password; }
+        void setAuthentificated(bool authentificated) { this->authentificated = authentificated; }
 
         virtual void sendMessages(std::string message);
         std::string receiveMessages();

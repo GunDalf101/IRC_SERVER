@@ -6,6 +6,12 @@ void CommandNick::execute(IRCClient *client, const std::string &params)
     std::stringstream paramsStream(params);
     std::string nick;
     paramsStream >> nick;
+    std::cout << "nick: " << nick << std::endl;
+    if (nick == ":")
+    {
+        client->sendMessages(":" + oldNick + " 431 " + oldNick + " :No nickname given");
+        return;
+    }
     client->setNickname(nick);
     client->sendMessages(":" + oldNick + " NICK " + nick);
 }
