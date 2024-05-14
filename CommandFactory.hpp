@@ -2,12 +2,13 @@
 
 #include "Client.hpp"
 #include "Command.hpp"
+#include "Server.hpp"
 
 class IRCClient;
 
 class CommandFactory {
     public:
-        static ICommand *createCommand(const std::string &command)
+        static ICommand *createCommand(const std::string &command, IRCServer *server)
         {
             if (command == "NICK") {
                 return new CommandNick();
@@ -16,7 +17,7 @@ class CommandFactory {
             } else if (command == "PASS") {
                 return new CommandPass();
             } else if (command == "JOIN") {
-                return new CommandJoin();
+                return new CommandJoin(server);
             } else {
                 return nullptr;
             }

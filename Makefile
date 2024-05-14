@@ -7,6 +7,7 @@ SRCS = webserv.cpp \
 		Server.cpp \
 		Client.cpp \
 		Command.cpp \
+		Channel.cpp \
 
 OBJS = $(SRCS:.cpp=.o)
 

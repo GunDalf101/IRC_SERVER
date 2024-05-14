@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "CommandFactory.hpp"
 
 IRCServer::IRCServer(int port, std::string password) {
     (void)password;
@@ -99,7 +100,7 @@ void IRCServer::parseCommands(std::string command, int clientFd) {
     std::string params;
     std::getline(ss, params);
 
-    ICommand* commandObj = CommandFactory::createCommand(cmd);
+    ICommand* commandObj = CommandFactory::createCommand(cmd, this);
     if (commandObj != nullptr) {
         commandObj->execute(clients[clientFd], params);
     } else {
@@ -117,4 +118,17 @@ void IRCServer::replaceClient(int client_fd, IRCClient* newClient) {
         delete clients[client_fd];
         clients[client_fd] = newClient;
     }
+}
+
+void IRCServer::createChannel(std::string channelName) {
+    if (channels.find(channelName) == channels.end()) {
+        channels[channelName] = new IRCChannel(channelName);
+    }
+}
+
+IRCChannel* IRCServer::getChannel(std::string channelName) {
+    if (channels.find(channelName) != channels.end()) {
+        return channels[channelName];
+    }
+    return nullptr;
 }

@@ -18,7 +18,14 @@ void CommandNick::execute(IRCClient *client, const std::string &params)
 
 void CommandUser::execute(IRCClient *client, const std::string &params)
 {
-    client->setUsername(params);
+    std::string username;
+    std::string mode;
+    std::string unused;
+    std::string realname;
+    std::stringstream paramsStream(params);
+    paramsStream >> username >> mode >> unused >> realname;
+    client->setUsername(username);
+    client->setRealname(realname);
 }
 
 void CommandPass::execute(IRCClient *client, const std::string &params)
@@ -28,5 +35,13 @@ void CommandPass::execute(IRCClient *client, const std::string &params)
 
 void CommandJoin::execute(IRCClient *client, const std::string &params)
 {
-    client->sendMessages("JOIN " + params);
+    std::string channelName = params;
+    if (server->getChannel(channelName) == nullptr)
+    {
+        server->createChannel(channelName);
+    }
+    IRCChannel *channel = server->getChannel(channelName);
+    channel->addClient(client);
+    std::cout << "join" << std::endl;
+    client->sendMessages(":" + client->getNickname() + "!~" + client->getUsername() + "@" + client->getHostname() + " JOIN " + channelName);
 }

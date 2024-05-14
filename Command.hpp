@@ -1,5 +1,5 @@
 #pragma once
-#include "Client.hpp"
+#include "Server.hpp"
 
 class IRCClient;
 
@@ -38,9 +38,15 @@ class CommandPass : public ICommand {
 };
 
 class CommandJoin : public ICommand {
+    private:
+        IRCServer *server;
     public:
+        CommandJoin(IRCServer *server) : server(server) {}
         void execute(IRCClient *client, const std::string &params);
         bool canExecute(IRCClient *client){
             return client->isAuthentificated();
+        }
+        void setServer(IRCServer *server){
+            this->server = server;
         }
 };
