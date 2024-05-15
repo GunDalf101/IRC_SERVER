@@ -106,7 +106,7 @@ void IRCServer::parseCommands(std::string command, int clientFd) {
     std::getline(ss, params);
 
     ICommand* commandObj = CommandFactory::createCommand(cmd, this);
-    if (commandObj != nullptr) {
+    if (commandObj != NULL) {
         commandObj->execute(clients[clientFd], params);
     } else {
         std::cout << "Unknown command: " << cmd << std::endl;
@@ -135,5 +135,5 @@ IRCChannel* IRCServer::getChannel(std::string channelName) {
     if (channels.find(channelName) != channels.end()) {
         return channels[channelName];
     }
-    return nullptr;
+    return NULL;
 }

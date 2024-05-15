@@ -18,8 +18,10 @@ class CommandFactory {
                 return new CommandPass();
             } else if (command == "JOIN") {
                 return new CommandJoin(server);
+            } else if (command == "PART") {
+                return new CommandPart(server);
             } else {
-                return nullptr;
+                return NULL;
             }
         }
 };

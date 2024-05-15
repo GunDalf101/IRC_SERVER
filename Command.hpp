@@ -50,3 +50,17 @@ class CommandJoin : public ICommand {
             this->server = server;
         }
 };
+
+class CommandPart : public ICommand {
+    private:
+        IRCServer *server;
+    public:
+        CommandPart(IRCServer *server) : server(server) {}
+        void execute(IRCClient *client, const std::string &params);
+        bool canExecute(IRCClient *client){
+            return client->isAuthentificated();
+        }
+        void setServer(IRCServer *server){
+            this->server = server;
+        }
+};

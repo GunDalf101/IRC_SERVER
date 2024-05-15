@@ -1,4 +1,5 @@
 #include "Command.hpp"
+#include <iostream>
 
 void CommandNick::execute(IRCClient *client, const std::string &params)
 {
@@ -36,11 +37,24 @@ void CommandPass::execute(IRCClient *client, const std::string &params)
 void CommandJoin::execute(IRCClient *client, const std::string &params)
 {
     std::string channelName = params;
-    if (server->getChannel(channelName) == nullptr)
+    if (server->getChannel(channelName) == NULL)
     {
         server->createChannel(channelName);
     }
     IRCChannel *channel = server->getChannel(channelName);
     channel->addClient(client);
     client->sendMessages(":" + client->getNickname() + "!~" + client->getUsername() + "@" + client->getHostname() + " JOIN " + channelName);
+}
+
+void CommandPart::execute(IRCClient *client, const std::string &params)
+{
+    std::string channelName = params;
+    IRCChannel *channel = server->getChannel(channelName);
+    if (channel == NULL)
+    {
+        client->sendMessages(":" + client->getNickname() + " 403 " + client->getNickname() + " " + channelName + " :No such channel");
+        return;
+    }
+    channel->removeClient(client);
+    client->sendMessages(":" + client->getNickname() + "!~" + client->getUsername() + "@" + client->getHostname() + " PART " + channelName);
 }

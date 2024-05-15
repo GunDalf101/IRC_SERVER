@@ -11,6 +11,7 @@ class IRCClient {
         std::string realname;
         std::string line;
         bool authentificated;
+        bool operatorFlag;
         std::string ipAddr;
     public:
 
@@ -25,6 +26,9 @@ class IRCClient {
         void setUsername(std::string username) { this->username = username; }
         void setPassword(std::string password) { this->password = password; }
         void setAuthentificated(bool authentificated) { this->authentificated = authentificated; }
+        bool isAuthentificated() { return authentificated; }
+        void setOperator(bool operatorFlag) { this->operatorFlag = operatorFlag; }
+        bool isOperator() { return operatorFlag; }
         std::string getHostname() { return hostname; }
         void setHostname(std::string hostname) { this->hostname = hostname; }
         std::string getRealname() { return realname; }
@@ -34,9 +38,7 @@ class IRCClient {
         std::string getIpAddr() { return ipAddr; }
         void setIpAddr(std::string ipAddr) { this->ipAddr = ipAddr; }
 
+
         virtual void sendMessages(std::string message);
         std::string receiveMessages();
-        virtual bool isAuthentificated() { return false; }
-        virtual bool isOperator() { return false; }
-
 };
