@@ -1,5 +1,6 @@
 #include "Server.hpp"
 #include "CommandFactory.hpp"
+#include <sys/_pthread/_pthread_once_t.h>
 
 IRCServer::IRCServer(int port, std::string password) {
     (void)password;
@@ -46,7 +47,7 @@ int IRCServer::setupMainSocket(int port) {
         std::cerr << "setsockopt() failed: " << strerror(errno) << std::endl;
         exit(1);
     }
-
+    fcntl(server_fd, F_SETFL, O_NONBLOCK);
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
@@ -56,7 +57,7 @@ int IRCServer::setupMainSocket(int port) {
         exit(1);
     }
 
-    if (listen(server_fd, 5) == -1) {
+    if (listen(server_fd, 10) == -1) {
         std::cerr << "listen() failed: " << strerror(errno) << std::endl;
         exit(1);
     }
@@ -68,27 +69,31 @@ void IRCServer::handleConnection() {
     struct sockaddr_in client_addr;
     socklen_t client_addrlen = sizeof(client_addr);
     int new_fd = accept(server_fd, (struct sockaddr*)&client_addr, &client_addrlen);
+    char ipCli[INET_ADDRSTRLEN];
     if (new_fd == -1) {
         std::cerr << "accept() failed: " << strerror(errno) << std::endl;
         return;
     }
+    inet_ntop(AF_INET, &client_addr.sin_addr, ipCli, INET_ADDRSTRLEN);
     pollfd pfd;
     pfd.fd = new_fd;
     pfd.events = POLLIN;
-
+    fcntl(new_fd, F_SETFL, O_NONBLOCK);
     fds.push_back(pfd);
     IRCClient* client = new IRCClient(new_fd);
     clients[new_fd] = client;
+    client->setIpAddr(ipCli);
+    std::cout << "New connection from " << ipCli << std::endl;
 }
 
 void IRCServer::handleClients(int i) {
-    char buffer[1024] = {0};
+    char buffer[1024];
+    memset(buffer, 0, 1024);
     int valread = read(fds[i].fd, buffer, 1024);
     if (valread == 0) {
         close(fds[i].fd);
         fds.erase(fds.begin() + i);
     } else {
-        std::cout << "Received: " << buffer << std::endl;
         parseCommands(buffer, fds[i].fd);
     }
 }

@@ -42,6 +42,5 @@ void CommandJoin::execute(IRCClient *client, const std::string &params)
     }
     IRCChannel *channel = server->getChannel(channelName);
     channel->addClient(client);
-    std::cout << "join" << std::endl;
     client->sendMessages(":" + client->getNickname() + "!~" + client->getUsername() + "@" + client->getHostname() + " JOIN " + channelName);
 }

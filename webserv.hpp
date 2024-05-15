@@ -15,5 +15,6 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <unordered_map>
+#include <arpa/inet.h>
 
 #endif

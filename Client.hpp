@@ -9,8 +9,11 @@ class IRCClient {
         std::string password;
         std::string hostname;
         std::string realname;
+        std::string line;
         bool authentificated;
+        std::string ipAddr;
     public:
+
         IRCClient(int client_fd);
         virtual ~IRCClient();
 
@@ -26,6 +29,10 @@ class IRCClient {
         void setHostname(std::string hostname) { this->hostname = hostname; }
         std::string getRealname() { return realname; }
         void setRealname(std::string realname) { this->realname = realname; }
+        std::string getLine() { return line; }
+        void setLine(std::string line) { this->line = line; }
+        std::string getIpAddr() { return ipAddr; }
+        void setIpAddr(std::string ipAddr) { this->ipAddr = ipAddr; }
 
         virtual void sendMessages(std::string message);
         std::string receiveMessages();
