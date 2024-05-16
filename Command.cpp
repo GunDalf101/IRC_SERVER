@@ -46,7 +46,7 @@ void CommandJoin::execute(IRCClient *client, const std::string &params)
     }
     IRCChannel *channel = server->getChannel(channelName);
     channel->addClient(client);
-    client->sendMessages(RPL_JOIN(client->getNickname(), client->getUsername(), client->getHostname(), channelName));
+    client->sendMessages(RPL_JOIN(client->getNickname(), client->getUsername(), channelName, client->getIpAddr()));
 }
 
 void CommandPart::execute(IRCClient *client, const std::string &params)
