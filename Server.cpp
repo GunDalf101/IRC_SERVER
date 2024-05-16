@@ -94,6 +94,7 @@ void IRCServer::handleClients(int i) {
         close(fds[i].fd);
         fds.erase(fds.begin() + i);
     } else {
+        std::cout << "Received: " << buffer << std::endl;
         parseCommands(buffer, fds[i].fd);
     }
 }

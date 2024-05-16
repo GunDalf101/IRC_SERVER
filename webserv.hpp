@@ -16,5 +16,6 @@
 #include <unistd.h>
 #include <unordered_map>
 #include <arpa/inet.h>
+#include "CommandRpl.hpp"
 
 #endif

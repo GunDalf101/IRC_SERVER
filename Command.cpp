@@ -10,11 +10,11 @@ void CommandNick::execute(IRCClient *client, const std::string &params)
     std::cout << "nick: " << nick << std::endl;
     if (nick == ":")
     {
-        client->sendMessages(":" + oldNick + " 431 " + oldNick + " :No nickname given");
+        client->sendMessages(ERR_NONICKNAMEGIVEN(nick, client->getHostname()));
         return;
     }
     client->setNickname(nick);
-    client->sendMessages(":" + oldNick + " NICK " + nick);
+    client->sendMessages(NICKNAME_RPLY(oldNick, client->getUsername(), client->getHostname(), nick));
 }
 
 void CommandUser::execute(IRCClient *client, const std::string &params)
@@ -31,7 +31,10 @@ void CommandUser::execute(IRCClient *client, const std::string &params)
 
 void CommandPass::execute(IRCClient *client, const std::string &params)
 {
-    client->setPassword(params);
+    std::string password;
+    std::stringstream paramsStream(params);
+    paramsStream >> password;
+    client->setPassword(password);
 }
 
 void CommandJoin::execute(IRCClient *client, const std::string &params)
@@ -43,7 +46,7 @@ void CommandJoin::execute(IRCClient *client, const std::string &params)
     }
     IRCChannel *channel = server->getChannel(channelName);
     channel->addClient(client);
-    client->sendMessages(":" + client->getNickname() + "!~" + client->getUsername() + "@" + client->getHostname() + " JOIN " + channelName);
+    client->sendMessages(RPL_JOIN(client->getNickname(), client->getUsername(), client->getHostname(), channelName));
 }
 
 void CommandPart::execute(IRCClient *client, const std::string &params)

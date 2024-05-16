@@ -2,9 +2,21 @@
 
 class IRCClient;
 
+enum ChannelMode {
+    INVITE_ONLY,
+    TOPIC_PROTECTION,
+    KEY_REQUIRED,
+    OPERATOR_PRIVILEGES,
+    USER_LIMIT
+};
+
 class IRCChannel {
     private:
         std::string name;
+        std::string topic;
+        std::string mode;
+        std::string key;
+        // int userLimit;
         std::vector<IRCClient *> members;
     public:
         IRCChannel(std::string name);
