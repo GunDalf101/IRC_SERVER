@@ -14,7 +14,7 @@ class IRCChannel {
     private:
         std::string name;
         std::string topic;
-        ChannelMode mode;
+        // ChannelMode mode;
         std::string key;
         // int userLimit;
         std::vector<IRCClient *> members;

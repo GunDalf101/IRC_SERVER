@@ -11,11 +11,11 @@ class CommandFactory {
         static ICommand *createCommand(const std::string &command, IRCServer *server)
         {
             if (command == "NICK") {
-                return new CommandNick();
+                return new CommandNick(*server);
             } else if (command == "USER") {
                 return new CommandUser();
             } else if (command == "PASS") {
-                return new CommandPass();
+                return new CommandPass(*server);
             } else if (command == "JOIN") {
                 return new CommandJoin(server);
             } else if (command == "PART") {

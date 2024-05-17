@@ -3,7 +3,7 @@
 #include <sys/_pthread/_pthread_once_t.h>
 
 IRCServer::IRCServer(int port, std::string password) {
-    (void)password;
+    this->password = password;
     server_fd = setupMainSocket(port);
     pollfd pfd;
     pfd.fd = server_fd;
@@ -13,6 +13,10 @@ IRCServer::IRCServer(int port, std::string password) {
 
 IRCServer::~IRCServer() {
     close(server_fd);
+}
+
+std::string &IRCServer::getPassword() {
+    return this->password;
 }
 
 void IRCServer::run() {
@@ -108,6 +112,7 @@ void IRCServer::parseCommands(std::string command, int clientFd) {
 
     ICommand* commandObj = CommandFactory::createCommand(cmd, this);
     if (commandObj != NULL) {
+        params = params.substr(1, params.length() - 2); // this for removing the space after the command
         commandObj->execute(clients[clientFd], params);
     } else {
         std::cout << "Unknown command: " << cmd << std::endl;
@@ -137,4 +142,9 @@ IRCChannel* IRCServer::getChannel(std::string channelName) {
         return channels[channelName];
     }
     return NULL;
+}
+
+std::unordered_map<int, IRCClient*> IRCServer::getCliens()
+{
+    return this->clients;
 }

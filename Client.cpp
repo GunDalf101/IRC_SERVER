@@ -3,7 +3,7 @@
 IRCClient::IRCClient(int client_fd) {
     this->client_fd = client_fd;
     this->nickname = "";
-    this->username = "user";
+    this->username = "";
     this->password = "";
     this->hostname = "localhost";
     this->realname = "";

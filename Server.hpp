@@ -8,6 +8,7 @@ class ICommand;
 class IRCServer {
     private:
         int server_fd;
+        std::string password;
         std::vector<struct pollfd> fds;
         std::unordered_map<int, IRCClient*> clients;
         std::unordered_map<std::string, IRCChannel*> channels;
@@ -22,6 +23,9 @@ class IRCServer {
         void replaceClient(int client_fd, IRCClient* newClient);
         void createChannel(std::string channelName);
         IRCChannel* getChannel(std::string channelName);
+        IRCClient& getClientByNickname(std::string nickname);
+        std::unordered_map<int, IRCClient*> getCliens();
+        std::string &getPassword();
         ~IRCServer();
         void run();
 };

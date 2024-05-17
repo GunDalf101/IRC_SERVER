@@ -7,14 +7,41 @@ void CommandNick::execute(IRCClient *client, const std::string &params)
     std::stringstream paramsStream(params);
     std::string nick;
     paramsStream >> nick;
-    std::cout << "nick: " << nick << std::endl;
+    // std::cout << "nick: " << nick << std::endl;
     if (nick == ":")
     {
         client->sendMessages(ERR_NONICKNAMEGIVEN(nick, client->getHostname()));
         return;
     }
+    if(isAlreadyInuse(params))
+    {
+        client->sendMessages(ERR_NICKNAMEINUSE(params, client->getHostname()));
+        return ;
+    }
+
     client->setNickname(nick);
+    // std::cout << client->getUsername().empty() << std::endl;
+    // if(client->getUsername().empty())
+    //     client->setUsername(nick);
     client->sendMessages(NICKNAME_RPLY(oldNick, client->getUsername(), client->getHostname(), nick));
+}
+
+// bool CommandNick::isValidNick(const std::string &nickname)
+// {
+
+// }
+
+bool CommandNick::isAlreadyInuse(const std::string &new_nickname)
+{
+    std::unordered_map<int, IRCClient*> clients = server.getCliens();
+    std::unordered_map<int, IRCClient*>::iterator i = clients.begin();
+    while (i != clients.end())
+    {
+        if (!(*i).second->getNickname().compare(new_nickname))
+            return true;
+        i++;
+    }
+    return false;
 }
 
 void CommandUser::execute(IRCClient *client, const std::string &params)
@@ -24,17 +51,26 @@ void CommandUser::execute(IRCClient *client, const std::string &params)
     std::string unused;
     std::string realname;
     std::stringstream paramsStream(params);
-    paramsStream >> username >> mode >> unused >> realname;
+    paramsStream >> username >> mode >> unused;
+    std::getline(paramsStream, realname);
+    if(realname.length() < 2)
+        return ;
+    realname.erase(0,1);
+    if(realname.at(0) == ':')
+        realname.erase(0, 1);
+    else
+        if(realname.find(' ') != std::string::npos)
+            return ;
+    std::cout << "[" +username+ "]" << "[" +mode+ "]" << "[" +unused+ "]" << "[" +realname+ "]" << std::endl;
+    client->setNickname(username);
     client->setUsername(username);
     client->setRealname(realname);
 }
 
 void CommandPass::execute(IRCClient *client, const std::string &params)
 {
-    std::string password;
-    std::stringstream paramsStream(params);
-    paramsStream >> password;
-    client->setPassword(password);
+    if(params.compare(server.getPassword()))
+        client->sendMessages(ERR_PASSWDMISMATCH(client->getNickname(), client->getHostname()));
 }
 
 void CommandJoin::execute(IRCClient *client, const std::string &params)

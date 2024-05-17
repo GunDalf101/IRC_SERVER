@@ -11,8 +11,12 @@ class ICommand {
 };
 
 class CommandNick : public ICommand {
+    IRCServer &server;
     public:
+        CommandNick(IRCServer &server):server(server){};
         void execute(IRCClient *client, const std::string &params);
+        bool isAlreadyInuse(const std::string &new_nickname);
+        bool isValidNick(const std::string &nickname);
         bool canExecute(IRCClient *client){
             (void)client;
             return true;
@@ -29,7 +33,10 @@ class CommandUser : public ICommand {
 };
 
 class CommandPass : public ICommand {
+    private:
+        IRCServer &server;
     public:
+        CommandPass(IRCServer &server):server(server){}
         void execute(IRCClient *client, const std::string &params);
         bool canExecute(IRCClient *client){
             (void)client;
