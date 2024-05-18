@@ -1,35 +1,53 @@
 #include "Command.hpp"
 #include <iostream>
 
+std::string getColonArg(std::string arg)
+{
+    if(!arg.empty() && arg.at(0) == ':')
+        arg.erase(0,1);
+    return arg;
+}
+
+bool isValidChar(char c)
+{
+    std::string special = "-_\\[]{}^|";
+    if(isalnum(c))
+        return true;
+    for(unsigned int i = 0; i < special.length(); i++)
+        if(special.at(i) == c)
+            return true;
+    return false;
+}
+
+bool CommandNick::isValidNickUser(const std::string &nickname)
+{
+    if(nickname.length() > 30)
+        return false;
+    if(!isalpha(nickname.at(0)))
+        return false;
+    for(unsigned int i = 0; i < nickname.length(); i++)
+        if(!isValidChar(nickname.at(i)))
+            return false;
+    return true;
+}
+
 void CommandNick::execute(IRCClient *client, const std::string &params)
 {
     std::string oldNick = client->getNickname();
-    std::stringstream paramsStream(params);
     std::string nick;
-    paramsStream >> nick;
-    // std::cout << "nick: " << nick << std::endl;
-    if (nick == ":")
-    {
+    nick = getColonArg(params);
+    if (nick.empty())
         client->sendMessages(ERR_NONICKNAMEGIVEN(nick, client->getHostname()));
-        return;
-    }
-    if(isAlreadyInuse(params))
+    else if (!isValidNickUser(nick))
+        client->sendMessages(ERR_ERRONEUSNICKNAME(nick, client->getHostname()));
+    else if(isAlreadyInuse(nick))
+        client->sendMessages(ERR_NICKNAMEINUSE(nick, client->getHostname()));
+    else
     {
-        client->sendMessages(ERR_NICKNAMEINUSE(params, client->getHostname()));
-        return ;
+        client->setNickname(nick);
+        client->sendMessages(NICKNAME_RPLY(oldNick, client->getUsername(), client->getHostname(), nick));
     }
-
-    client->setNickname(nick);
-    // std::cout << client->getUsername().empty() << std::endl;
-    // if(client->getUsername().empty())
-    //     client->setUsername(nick);
-    client->sendMessages(NICKNAME_RPLY(oldNick, client->getUsername(), client->getHostname(), nick));
 }
-
-// bool CommandNick::isValidNick(const std::string &nickname)
-// {
-
-// }
 
 bool CommandNick::isAlreadyInuse(const std::string &new_nickname)
 {

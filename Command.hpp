@@ -16,7 +16,7 @@ class CommandNick : public ICommand {
         CommandNick(IRCServer &server):server(server){};
         void execute(IRCClient *client, const std::string &params);
         bool isAlreadyInuse(const std::string &new_nickname);
-        bool isValidNick(const std::string &nickname);
+        bool isValidNickUser(const std::string &nickname);
         bool canExecute(IRCClient *client){
             (void)client;
             return true;
