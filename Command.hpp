@@ -1,5 +1,6 @@
 #pragma once
 #include "Server.hpp"
+#include <unordered_map>
 
 class IRCClient;
 
@@ -50,6 +51,7 @@ class CommandJoin : public ICommand {
     public:
         CommandJoin(IRCServer *server) : server(server) {}
         void execute(IRCClient *client, const std::string &params);
+        void checkChannel(std::unordered_map<std::string, std::string> channelKeyMap, IRCClient *client);
         bool canExecute(IRCClient *client){
             return client->isAuthentificated();
         }

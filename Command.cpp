@@ -91,18 +91,6 @@ void CommandPass::execute(IRCClient *client, const std::string &params)
         client->sendMessages(ERR_PASSWDMISMATCH(client->getNickname(), client->getHostname()));
 }
 
-void CommandJoin::execute(IRCClient *client, const std::string &params)
-{
-    std::string channelName = params;
-    if (server->getChannel(channelName) == NULL)
-    {
-        server->createChannel(channelName);
-    }
-    IRCChannel *channel = server->getChannel(channelName);
-    channel->addClient(client);
-    client->sendMessages(RPL_JOIN(client->getNickname(), client->getUsername(), channelName, client->getIpAddr()));
-}
-
 void CommandPart::execute(IRCClient *client, const std::string &params)
 {
     std::string channelName = params;

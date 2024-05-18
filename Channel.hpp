@@ -14,10 +14,12 @@ class IRCChannel {
     private:
         std::string name;
         std::string topic;
+        std::string type;
         // ChannelMode mode;
         std::string key;
         // int userLimit;
         std::vector<IRCClient *> members;
+        std::vector<IRCClient *> operators;
     public:
         IRCChannel(std::string name);
         ~IRCChannel();
