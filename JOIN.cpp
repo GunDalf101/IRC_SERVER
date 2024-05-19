@@ -37,6 +37,7 @@ void CommandJoin::handleChannel(std::unordered_map<std::string, std::string> cha
             it++;
             continue;
         }
+
         if (server->getChannel(it->first)) {
             IRCChannel *channel = server->getChannel(it->first);
             if (channel->getKey() != it->second){
@@ -45,13 +46,22 @@ void CommandJoin::handleChannel(std::unordered_map<std::string, std::string> cha
                 continue;
             }
         }
+
         if (!server->getChannel(it->first)) {
             server->createChannel(it->first);
             IRCChannel *channel = server->getChannel(it->first);
             channel->addOperator(client);
             channel->setKey(it->second);
         }
+
         IRCChannel *channel = server->getChannel(it->first);
+
+        if (channel->getLimit() && channel->getNumUsers() >= channel->getLimit()) {
+            client->sendMessages(ERR_CHANNELISFULL(client->getNickname(), client->getHostname(), it->first));
+            it++;
+            continue;
+        }
+
         client->sendMessages(RPL_JOIN(client->getNickname(), client->getUsername(), it->first, client->getIpAddr()));
         channel->notifyClients(RPL_JOIN(client->getNickname(), client->getUsername(), it->first, client->getIpAddr()));
         if (!channel->getTopic().empty()) {
@@ -79,6 +89,10 @@ void CommandJoin::execute(IRCClient *client, const std::string &params)
             } else {
                 channelKeyMap[channels[i]] = "";
             }
+        }
+        if (channelKeyMap.empty()) {
+            client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "JOIN"));
+            return;
         }
         handleChannel(channelKeyMap, client);
     }

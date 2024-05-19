@@ -17,23 +17,27 @@ class IRCChannel {
         std::string type;
         // ChannelMode mode;
         std::string key;
-        // int userLimit;
+        int userLimit;
         std::vector<IRCClient *> members;
+        std::vector<IRCClient *> users;
         std::vector<IRCClient *> operators;
     public:
         IRCChannel(std::string name);
         ~IRCChannel();
 
-        void addClient(IRCClient *client);
+        void addUser(IRCClient *client);
         void addOperator(IRCClient *client);
         void removeOperator(IRCClient *client);
-        void removeClient(IRCClient *client);
+        void removeUser(IRCClient *client);
         void notifyClients(std::string message);
         std::string getName() { return name; }
-        std::vector<IRCClient *> getClients() { return members; }
+        std::vector<IRCClient *> getClients() { return users; }
         std::vector<IRCClient *> getOperators() { return operators; }
         std::string getKey() { return key; }
         void setKey(std::string key) { this->key = key; }
         void setTopic(std::string topic) { this->topic = topic; }
         std::string getTopic() { return topic; }
+        void setLimit(int limit) { userLimit = limit; }
+        int getLimit() { return userLimit; }
+        int getNumUsers() { return members.size(); }
 };
