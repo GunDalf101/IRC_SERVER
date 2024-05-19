@@ -22,8 +22,8 @@ bool CommandJoin::sendNameList(IRCClient *client, IRCChannel *channel){
     for (std::vector<IRCClient *>::iterator it = members.begin(); it != members.end(); it++) {
         clients += "@" + (*it)->getNickname() + " ";
     }
-    client->sendMessages(RPL_NAMREPLY(client->getHostname(), clients, channel->getName(), client->getNickname()));
-    client->sendMessages(RPL_ENDOFNAMES(client->getHostname(), client->getNickname(), channel->getName()));
+    channel->notifyClients(RPL_NAMREPLY(client->getHostname(), clients, channel->getName(), client->getNickname()));
+    channel->notifyClients(RPL_ENDOFNAMES(client->getHostname(), client->getNickname(), channel->getName()));
     return true;
 }
 
