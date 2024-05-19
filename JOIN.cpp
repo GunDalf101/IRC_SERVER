@@ -1,4 +1,5 @@
 #include "Command.hpp"
+#include "CommandRpl.hpp"
 #include <iostream>
 
 std::vector<std::string> split(const std::string& s, char delimiter) {
@@ -11,27 +12,52 @@ std::vector<std::string> split(const std::string& s, char delimiter) {
     return tokens;
 }
 
-void CommandJoin::checkChannel(std::unordered_map<std::string, std::string> channelKeyMap, IRCClient *client){
+bool CommandJoin::sendNameList(IRCClient *client, IRCChannel *channel){
+    std::string clients;
+    std::vector<IRCClient *> members = channel->getClients();
+    for (std::vector<IRCClient *>::iterator it = members.begin(); it != members.end(); it++) {
+        clients += (*it)->getNickname() + " ";
+    }
+    members = channel->getOperators();
+    for (std::vector<IRCClient *>::iterator it = members.begin(); it != members.end(); it++) {
+        clients += "@" + (*it)->getNickname() + " ";
+    }
+    client->sendMessages(RPL_NAMREPLY(client->getHostname(), clients, channel->getName(), client->getNickname()));
+    client->sendMessages(RPL_ENDOFNAMES(client->getHostname(), client->getNickname(), channel->getName()));
+    return true;
+}
+
+void CommandJoin::handleChannel(std::unordered_map<std::string, std::string> channelKeyMap, IRCClient *client){
     (void)client;
     std::unordered_map<std::string, std::string>::iterator it;
     it = channelKeyMap.begin();
-    if (server->getChannel(it->first) == NULL) {
-        server->createChannel(it->first);
-    }
     while (it != channelKeyMap.end()) {
-        //check if channel start zith #
-        if (it->first[0] != '#' || it->first[0] != '&') {
+        if (it->first[0] != '#' || it->first.length() > 50){
             client->sendMessages(ERR_BADCHANNELNAME(client->getNickname(), client->getHostname(), it->first));
+            it++;
+            continue;
         }
-        if (it->first.length() > 50) {
-            std::cout << "Invalid channel name" << std::endl;
-            return;
+        if (server->getChannel(it->first)) {
+            IRCChannel *channel = server->getChannel(it->first);
+            if (channel->getKey() != it->second){
+                client->sendMessages(ERR_BADCHANNELKEY(client->getNickname(), client->getHostname(), it->first));
+                it++;
+                continue;
+            }
         }
-        // check if they contqin spaces control bell or comma
-        // if (it->first.find(' ') != std::string::npos || it->first.find(',') != std::string::npos || it->first.find('\a') != std::string::npos) {
-        //     std::cout << "Invalid channel name" << std::endl;
-        //     return;
-        // }
+        if (!server->getChannel(it->first)) {
+            server->createChannel(it->first);
+            IRCChannel *channel = server->getChannel(it->first);
+            channel->addOperator(client);
+            channel->setKey(it->second);
+        }
+        IRCChannel *channel = server->getChannel(it->first);
+        client->sendMessages(RPL_JOIN(client->getNickname(), client->getUsername(), it->first, client->getIpAddr()));
+        channel->notifyClients(RPL_JOIN(client->getNickname(), client->getUsername(), it->first, client->getIpAddr()));
+        if (!channel->getTopic().empty()) {
+            client->sendMessages(RPL_TOPIC(client->getHostname(), client->getNickname(), it->first, channel->getTopic()));
+        }
+        sendNameList(client, channel);
         it++;
     }
     std::cout << std::endl;
@@ -44,10 +70,8 @@ void CommandJoin::execute(IRCClient *client, const std::string &params)
     if (!paramList.empty()) {
         std::vector<std::string> channels = split(paramList[0], ',');
         std::vector<std::string> keys;
-        if (paramList.size() > 1) {
-
+        if (paramList.size() > 1)
             keys = split(paramList[1], ',');
-        }
         std::unordered_map<std::string, std::string> channelKeyMap;
         for (size_t i = 0; i < channels.size(); ++i) {
             if (i < keys.size()) {
@@ -56,7 +80,6 @@ void CommandJoin::execute(IRCClient *client, const std::string &params)
                 channelKeyMap[channels[i]] = "";
             }
         }
-        checkChannel(channelKeyMap, client);
+        handleChannel(channelKeyMap, client);
     }
-    
 }

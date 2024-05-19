@@ -1,4 +1,5 @@
 #include "Channel.hpp"
+#include "Client.hpp"
 
 IRCChannel::IRCChannel(std::string name) : name(name)
 {
@@ -24,6 +25,20 @@ void IRCChannel::notifyClients(std::string message)
 {
     for (std::vector<IRCClient *>::iterator it = members.begin(); it != members.end(); it++)
     {
-        (*it)->sendMessages(":" + name + " " + message);
+        (*it)->sendMessages(message);
     }
+    for (std::vector<IRCClient *>::iterator it = operators.begin(); it != operators.end(); it++)
+    {
+        (*it)->sendMessages(message);
+    }
+}
+
+void IRCChannel::addOperator(IRCClient *client)
+{
+    operators.push_back(client);
+}
+
+void IRCChannel::removeOperator(IRCClient *client)
+{
+    operators.erase(std::remove(operators.begin(), operators.end(), client), operators.end());
 }

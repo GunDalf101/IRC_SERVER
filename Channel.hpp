@@ -25,8 +25,15 @@ class IRCChannel {
         ~IRCChannel();
 
         void addClient(IRCClient *client);
+        void addOperator(IRCClient *client);
+        void removeOperator(IRCClient *client);
         void removeClient(IRCClient *client);
         void notifyClients(std::string message);
         std::string getName() { return name; }
         std::vector<IRCClient *> getClients() { return members; }
+        std::vector<IRCClient *> getOperators() { return operators; }
+        std::string getKey() { return key; }
+        void setKey(std::string key) { this->key = key; }
+        void setTopic(std::string topic) { this->topic = topic; }
+        std::string getTopic() { return topic; }
 };

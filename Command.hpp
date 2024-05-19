@@ -48,10 +48,11 @@ class CommandPass : public ICommand {
 class CommandJoin : public ICommand {
     private:
         IRCServer *server;
+        void handleChannel(std::unordered_map<std::string, std::string> channelKeyMap, IRCClient *client);
+        bool sendNameList(IRCClient *client, IRCChannel *channel);
     public:
         CommandJoin(IRCServer *server) : server(server) {}
         void execute(IRCClient *client, const std::string &params);
-        void checkChannel(std::unordered_map<std::string, std::string> channelKeyMap, IRCClient *client);
         bool canExecute(IRCClient *client){
             return client->isAuthentificated();
         }
