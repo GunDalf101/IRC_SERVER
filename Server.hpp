@@ -23,7 +23,7 @@ class IRCServer {
         void replaceClient(int client_fd, IRCClient* newClient);
         void createChannel(std::string channelName);
         IRCChannel* getChannel(std::string channelName);
-        IRCClient& getClientByNickname(std::string nickname);
+        IRCClient* getClientByNickname(std::string nickname);
         std::unordered_map<int, IRCClient*> getCliens();
         std::string &getPassword();
         ~IRCServer();

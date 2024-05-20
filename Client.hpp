@@ -9,6 +9,7 @@ class IRCClient {
         std::string password;
         std::string hostname;
         std::string realname;
+        std::vector<std::string> channelInvited;
         std::string line;
         bool authentificated;
         bool operatorFlag;
@@ -37,6 +38,9 @@ class IRCClient {
         void setLine(std::string line) { this->line = line; }
         std::string getIpAddr() { return ipAddr; }
         void setIpAddr(std::string ipAddr) { this->ipAddr = ipAddr; }
+        bool isInvited(std::string channelName);
+        void invite(std::string channelName);
+        void removeInvite(std::string channelName);
 
 
         virtual void sendMessages(std::string message);

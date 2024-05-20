@@ -152,11 +152,14 @@ std::unordered_map<int, IRCClient*> IRCServer::getCliens()
     return this->clients;
 }
 
-IRCClient& IRCServer::getClientByNickname(std::string nickname) {
-    for (std::unordered_map<int, IRCClient*>::iterator it = clients.begin(); it != clients.end(); it++) {
+IRCClient* IRCServer::getClientByNickname(std::string nickname) {
+    std::unordered_map<int, IRCClient*>::iterator it = clients.begin();
+    while (it != clients.end()) {
+        std::cout << it->second->getNickname() << std::endl;
         if (it->second->getNickname() == nickname) {
-            return *it->second;
+            return it->second;
         }
+        it++;
     }
-    throw std::runtime_error("Client not found");
+    return NULL;
 }

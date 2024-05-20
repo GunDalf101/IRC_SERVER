@@ -7,7 +7,9 @@ IRCClient::IRCClient(int client_fd) {
     this->password = "";
     this->hostname = "localhost";
     this->realname = "";
+    this->operatorFlag = false;
     this->authentificated = false;
+    this->ipAddr = "";
 }
 
 IRCClient::~IRCClient() {
@@ -30,4 +32,20 @@ std::string IRCClient::receiveMessages() {
         return "";
     }
     return std::string(buffer);
+}
+
+bool IRCClient::isInvited(std::string channelName) {
+    for (std::vector<std::string>::iterator it = channelInvited.begin(); it != channelInvited.end(); it++) {
+        if (*it == channelName)
+            return true;
+    }
+    return false;
+}
+
+void IRCClient::invite(std::string channelName) {
+    channelInvited.push_back(channelName);
+}
+
+void IRCClient::removeInvite(std::string channelName) {
+    channelInvited.erase(std::remove(channelInvited.begin(), channelInvited.end(), channelName), channelInvited.end());
 }
