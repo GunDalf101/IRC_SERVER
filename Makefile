@@ -1,5 +1,5 @@
 CC = c++
-CFLAGS = -Wall -Wextra -Werror -Wshadow -Wno-shadow
+CFLAGS = -Wall -Wextra -Werror -Wshadow -Wno-shadow -std=c++98
 RM = rm -rf
 NAME = ircserv
 
@@ -9,6 +9,7 @@ SRCS = webserv.cpp \
 		Command.cpp \
 		Channel.cpp \
 		JOIN.cpp \
+		TOPIC.cpp \
 
 OBJS = $(SRCS:.cpp=.o)
 

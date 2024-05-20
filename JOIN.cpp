@@ -2,7 +2,7 @@
 #include "CommandRpl.hpp"
 #include <iostream>
 
-std::vector<std::string> split(const std::string& s, char delimiter) {
+static std::vector<std::string> split(const std::string& s, char delimiter) {
     std::vector<std::string> tokens;
     std::string token;
     std::istringstream tokenStream(s);
@@ -22,8 +22,8 @@ bool CommandJoin::sendNameList(IRCClient *client, IRCChannel *channel){
     for (std::vector<IRCClient *>::iterator it = members.begin(); it != members.end(); it++) {
         clients += "@" + (*it)->getNickname() + " ";
     }
-    channel->notifyClients(RPL_NAMREPLY(client->getHostname(), clients, channel->getName(), client->getNickname()));
-    channel->notifyClients(RPL_ENDOFNAMES(client->getHostname(), client->getNickname(), channel->getName()));
+    client->sendMessages(RPL_NAMREPLY(client->getHostname(), clients, channel->getName(), client->getNickname()));
+    client->sendMessages(RPL_ENDOFNAMES(client->getHostname(), client->getNickname(), channel->getName()));
     return true;
 }
 
@@ -45,6 +45,12 @@ void CommandJoin::handleChannel(std::unordered_map<std::string, std::string> cha
                 it++;
                 continue;
             }
+            if (channel->getClient(client->getNickname())) {
+                client->sendMessages(ERR_USERONCHANNEL(client->getHostname(), client->getNickname(), client->getNickname(), it->first));
+                it++;
+                continue;
+            }
+            channel->addUser(client);
         }
 
         if (!server->getChannel(it->first)) {
@@ -75,7 +81,6 @@ void CommandJoin::handleChannel(std::unordered_map<std::string, std::string> cha
 
 void CommandJoin::execute(IRCClient *client, const std::string &params)
 {
-    (void)client;
     std::vector<std::string> paramList = split(params, ' ');
     if (!paramList.empty()) {
         std::vector<std::string> channels = split(paramList[0], ',');

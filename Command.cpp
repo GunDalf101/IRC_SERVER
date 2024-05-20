@@ -79,7 +79,6 @@ void CommandUser::execute(IRCClient *client, const std::string &params)
     else
         if(realname.find(' ') != std::string::npos)
             return ;
-    std::cout << "[" +username+ "]" << "[" +mode+ "]" << "[" +unused+ "]" << "[" +realname+ "]" << std::endl;
     client->setNickname(username);
     client->setUsername(username);
     client->setRealname(realname);
@@ -100,6 +99,19 @@ void CommandPart::execute(IRCClient *client, const std::string &params)
         client->sendMessages(":" + client->getNickname() + " 403 " + client->getNickname() + " " + channelName + " :No such channel");
         return;
     }
-    channel->removeClient(client);
+    channel->removeUser(client);
     client->sendMessages(":" + client->getNickname() + "!~" + client->getUsername() + "@" + client->getHostname() + " PART " + channelName);
+}
+
+void CommandInvite::execute(IRCClient *client, const std::string &params)
+{
+    (void)client;
+    (void)params;
+}
+
+void CommandKick::execute(IRCClient *client, const std::string &params)
+{
+    (void)client;
+    (void)params;
+    
 }

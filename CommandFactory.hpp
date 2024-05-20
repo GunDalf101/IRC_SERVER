@@ -20,6 +20,12 @@ class CommandFactory {
                 return new CommandJoin(server);
             } else if (command == "PART") {
                 return new CommandPart(server);
+            } else if (command == "INVITE") {
+                return new CommandInvite(server);
+            } else if (command == "KICK") {
+                return new CommandKick(server);
+            } else if (command == "TOPIC") {
+                return new CommandTopic(server);
             } else {
                 return NULL;
             }

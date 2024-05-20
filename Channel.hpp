@@ -40,4 +40,6 @@ class IRCChannel {
         void setLimit(int limit) { userLimit = limit; }
         int getLimit() { return userLimit; }
         int getNumUsers() { return members.size(); }
+        IRCClient *getClient(std::string nickname);
+        IRCClient *getOperator(std::string nickname);
 };

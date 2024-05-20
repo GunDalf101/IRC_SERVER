@@ -74,3 +74,47 @@ class CommandPart : public ICommand {
             this->server = server;
         }
 };
+
+class CommandInvite : public ICommand {
+    private:
+        IRCServer *server;
+    public:
+        CommandInvite(IRCServer *server) : server(server) {}
+        void execute(IRCClient *client, const std::string &params);
+        bool canExecute(IRCClient *client){
+            return client->isAuthentificated();
+        }
+        void setServer(IRCServer *server){
+            this->server = server;
+        }
+};
+
+class CommandKick : public ICommand {
+    private:
+        IRCServer *server;
+    public:
+        CommandKick(IRCServer *server) : server(server) {}
+        void execute(IRCClient *client, const std::string &params);
+        bool canExecute(IRCClient *client){
+            return client->isAuthentificated();
+        }
+        void setServer(IRCServer *server){
+            this->server = server;
+        }
+};
+
+class CommandTopic : public ICommand {
+    private:
+        IRCServer *server;
+    public:
+        CommandTopic(IRCServer *server) : server(server) {}
+        void execute(IRCClient *client, const std::string &params);
+        bool canExecute(IRCClient *client){
+            return client->isAuthentificated();
+        }
+        void setServer(IRCServer *server){
+            this->server = server;
+        }
+};
+
+// std::vector<std::string> split(const std::string& s, char delimiter);
