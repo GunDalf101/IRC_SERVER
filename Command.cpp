@@ -86,7 +86,12 @@ void CommandUser::execute(IRCClient *client, const std::string &params)
 
 void CommandPass::execute(IRCClient *client, const std::string &params)
 {
-    if(params.compare(server.getPassword()))
+    std::cout << params << std::endl;
+    if(client->isAuthentificated())
+        client->sendMessages(ERR_ALREADYREGISTERED(client->getNickname(), client->getHostname()));
+    else if(params.empty())
+        client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "PASS"));
+    else if(params.compare(server.getPassword()))
         client->sendMessages(ERR_PASSWDMISMATCH(client->getNickname(), client->getHostname()));
 }
 
