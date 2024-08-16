@@ -112,7 +112,8 @@ void IRCServer::parseCommands(std::string command, int clientFd) {
 
     ICommand* commandObj = CommandFactory::createCommand(cmd, this);
     if (commandObj != NULL) {
-        params = params.substr(1, params.length()); // this for removing the space after the command
+        if(!params.empty())
+            params = params.substr(1, params.length()); // this for removing the space after the command
         if (params[params.length() - 1] == '\r') {
             params = params.substr(0, params.length() - 1);
         }

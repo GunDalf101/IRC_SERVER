@@ -26,6 +26,8 @@ class CommandFactory {
                 return new CommandKick(server);
             } else if (command == "TOPIC") {
                 return new CommandTopic(server);
+            } else if (command == "PRIVMSG") {
+                return new CommandPrivMsg(*server);
             } else {
                 return NULL;
             }

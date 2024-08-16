@@ -8,8 +8,8 @@ IRCClient::IRCClient(int client_fd) {
     this->hostname = "localhost";
     this->realname = "";
     this->operatorFlag = false;
-    this->authentificated = false;
     this->ipAddr = "";
+    this->authLevel = 0;
 }
 
 IRCClient::~IRCClient() {

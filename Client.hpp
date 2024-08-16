@@ -11,7 +11,6 @@ class IRCClient {
         std::string realname;
         std::vector<std::string> channelInvited;
         std::string line;
-        bool authentificated;
         bool operatorFlag;
         std::string ipAddr;
     public:
@@ -19,6 +18,7 @@ class IRCClient {
         IRCClient(int client_fd);
         virtual ~IRCClient();
 
+        unsigned int authLevel;
         int getClientFd() { return client_fd; }
         std::string getNickname() { return nickname; }
         std::string getUsername() { return username; }
@@ -26,8 +26,7 @@ class IRCClient {
         void setNickname(std::string nickname) { this->nickname = nickname; }
         void setUsername(std::string username) { this->username = username; }
         void setPassword(std::string password) { this->password = password; }
-        void setAuthentificated(bool authentificated) { this->authentificated = authentificated; }
-        bool isAuthentificated() { return authentificated; }
+        bool isAuthentificated() { return this->authLevel == 3; }
         void setOperator(bool operatorFlag) { this->operatorFlag = operatorFlag; }
         bool isOperator() { return operatorFlag; }
         std::string getHostname() { return hostname; }
