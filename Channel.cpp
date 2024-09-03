@@ -39,6 +39,17 @@ void IRCChannel::notifyClients(std::string message)
     }
 }
 
+bool IRCChannel::isClientExists(const std::string &nickname)
+{
+    for (std::vector<IRCClient *>::iterator it = getClients().begin(); it != getClients().end(); it++)
+        if ((*it)->getNickname() == nickname)
+            return true;
+    for (std::vector<IRCClient *>::iterator it = getOperators().begin(); it != getOperators().end(); it++)
+        if ((*it)->getNickname() == nickname)
+            return true;
+    return false;
+}
+
 void IRCChannel::addOperator(IRCClient *client)
 {
     members.push_back(client);
@@ -70,3 +81,4 @@ IRCClient *IRCChannel::getOperator(std::string nickname) {
     }
     return NULL;
 }
+

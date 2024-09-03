@@ -2,6 +2,17 @@
 #include <iostream>
 #include <string>
 
+std::vector<std::string> split(const std::string &str, char delimiter) {
+    std::vector<std::string> result;
+    std::string token;
+    std::stringstream ss(str);
+
+    while (std::getline(ss, token, delimiter))
+        result.push_back(token);
+
+    return result;
+}
+
 std::vector<std::string> toReqArgs(const std::string &params)
 {
     size_t index = params.find(':');
@@ -115,7 +126,7 @@ void CommandUser::execute(IRCClient *client, const std::string &params)
     mode = args[1];
     unused = args[2];
     realname = args[3];
-    client->setNickname(username);
+    // client->setNickname(username);
     client->setUsername(username);
     client->setRealname(realname);
 
@@ -140,15 +151,28 @@ void CommandPass::execute(IRCClient *client, const std::string &params)
 
 void CommandPart::execute(IRCClient *client, const std::string &params)
 {
-    std::string channelName = params;
-    IRCChannel *channel = server->getChannel(channelName);
-    if (channel == NULL)
+    std::vector<std::string> args = toReqArgs(params);
+    std::cout << "[" << args.size() << "]" << std::endl;
+    if (args.size() == 0)
+        return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "PART"));
+
+    std::vector<std::string> channels = split(args.at(0), ',');
+    for(size_t i = 0; i < channels.size(); i++)
     {
-        client->sendMessages(":" + client->getNickname() + " 403 " + client->getNickname() + " " + channelName + " :No such channel");
-        return;
+        std::string channelName = channels.at(i);
+        IRCChannel *channel = server->getChannel(channelName);
+        if (channel == NULL)
+            client->sendMessages(":" + client->getNickname() + " 403 " + client->getNickname() + " " + channelName + " :No such channel");
+        else
+        {
+            if(channel->isClientExists(client->getNickname()))
+            {
+                channel->removeUser(client);
+                client->sendMessages(":" + client->getNickname() + "!~" + client->getUsername() + "@" + client->getHostname() + " PART " + channelName);
+            } else
+                client->sendMessages(ERR_NOTONCHANNEL(client->getHostname(), channelName));
+        }
     }
-    channel->removeUser(client);
-    client->sendMessages(":" + client->getNickname() + "!~" + client->getUsername() + "@" + client->getHostname() + " PART " + channelName);
 }
 
 void CommandKick::execute(IRCClient *client, const std::string &params)
@@ -159,26 +183,44 @@ void CommandKick::execute(IRCClient *client, const std::string &params)
 
 void CommandPrivMsg::execute(IRCClient *client, const std::string &params)
 {
-    std::string rcvr;
+    std::string target;
     std::string message;
     IRCChannel *rcvChannel;
     IRCClient  *rcvClient;
 
     std::vector<std::string> args = toReqArgs(params);
-    rcvr = args.at(0);
+
+    if (args.size() < 2)
+        return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "PRIVMSG"));
+    if (args.at(1).empty())
+        return client->sendMessages(ERR_NOTEXTTOSEND(client->getNickname(), client->getHostname()));
+
+    std::vector<std::string> targets = split(args.at(0), ',');
+
     message = args.at(1);
-    if(rcvr.at(0) == '#')
+    for(size_t i = 0; i < targets.size(); i++)
     {
-        rcvChannel = this->server.getChannel(rcvr);
-        if(rcvChannel == NULL)
-            client->sendMessages(ERR_NOSUCHCHANNEL(client->getHostname(), client->getNickname(), rcvr));
-        else
-            rcvChannel->notifyClients(PRIVMSG_FORMAT(client->getNickname(), client->getUsername(), client->getHostname(), rcvr, message));
-    } else {
-        rcvClient = server.getClientByNickname(rcvr);
-        if(rcvClient == NULL)
-            client->sendMessages(ERR_NOSUCHNICK(client->getHostname(), client->getNickname(), rcvr));
-        else
-            rcvClient->sendMessages(PRIVMSG_FORMAT(client->getNickname(), client->getUsername(), client->getHostname(), rcvClient->getNickname(), message));
+        target = targets.at(i);
+        if(target.at(0) == '#')
+        {
+            std::cout << '[' << target << ']' << std::endl;
+            rcvChannel = this->server.getChannel(target);
+            if(rcvChannel == NULL)
+                client->sendMessages(ERR_NOSUCHCHANNEL(client->getHostname(), client->getNickname(), target));
+            else if(!rcvChannel->isClientExists(client->getNickname()))
+                client->sendMessages(ERR_CANNOTSENDTOCHAN(client->getHostname(), client->getNickname(), target));
+            else
+                rcvChannel->notifyClients(PRIVMSG_FORMAT(client->getNickname(), client->getUsername(), client->getHostname(), target, message));
+        } else {
+            rcvClient = server.getClientByNickname(target);
+            if(rcvClient == NULL)
+                client->sendMessages(ERR_NOSUCHNICK(client->getHostname(), client->getNickname(), target));
+            else
+                rcvClient->sendMessages(PRIVMSG_FORMAT(client->getNickname(), client->getUsername(), client->getHostname(), rcvClient->getNickname(), message));
+        }
     }
 }
+
+// multiple targets
+// empty text
+// need more params

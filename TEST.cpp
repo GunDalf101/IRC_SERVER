@@ -2,9 +2,9 @@
 #include <vector>
 #include <sstream>
 
-std::vector<std::string> toReqArgs(std::string &params)
+std::vector<std::string> toReqArgs(const std::string &params)
 {
-    int index = params.find(':');
+    size_t index = params.find(':');
     std::string co = params;
     if(index != std::string::npos)
         co = params.substr(0, index);
@@ -25,7 +25,7 @@ std::vector<std::string> toReqArgs(std::string &params)
 
 int main(int argc, char *argv[])
 {
-    std::string s = "";
+    std::string s = "a b c :     d";
     std::vector<std::string> result = toReqArgs(s);
 
     for (const auto &s : result)

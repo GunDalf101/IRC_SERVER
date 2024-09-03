@@ -142,9 +142,8 @@ void IRCServer::createChannel(std::string channelName) {
 }
 
 IRCChannel* IRCServer::getChannel(std::string channelName) {
-    if (channels.find(channelName) != channels.end()) {
+    if (channels.find(channelName) != channels.end())
         return channels[channelName];
-    }
     return NULL;
 }
 

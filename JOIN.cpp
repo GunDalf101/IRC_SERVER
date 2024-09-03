@@ -37,7 +37,7 @@ void CommandJoin::handleChannel(std::unordered_map<std::string, std::string> cha
             it++;
             continue;
         }
-
+        std::cout << "first ->>>>>>["<< it->first << "]\n";
         if (server->getChannel(it->first)) {
             IRCChannel *channel = server->getChannel(it->first);
             if (channel->getKey() != it->second){
