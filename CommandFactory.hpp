@@ -28,6 +28,8 @@ class CommandFactory {
                 return new CommandTopic(server);
             } else if (command == "PRIVMSG") {
                 return new CommandPrivMsg(*server);
+            } else if (command == "MODE") {
+                return new CommandMode(*server);
             } else {
                 return NULL;
             }

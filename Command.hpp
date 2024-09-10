@@ -129,4 +129,25 @@ class CommandTopic : public ICommand {
         }
 };
 
+// NOTE: ideally all these methods should be Interface defined including the constructor
+//      so that we get rid of these argument type being ptr or ref inconsistencies among
+//      classes that implements the same interface ICommand.
+//      ICommand should favor ref over ptr.
+class CommandMode : public ICommand {
+    private:
+        IRCServer &server;
+    public:
+        CommandMode(IRCServer& server) : server(server) {}
+        void execute(IRCClient *client, const std::string &params) {
+            (void)client;
+            (void)params;
+        }
+        bool canExecute(IRCClient *client) {
+            return client->isAuthentificated();
+        }
+        void setServer(IRCServer& server){
+            this->server = server;
+        }
+};
+
 // std::vector<std::string> split(const std::string& s, char delimiter);
