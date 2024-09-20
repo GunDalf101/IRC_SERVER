@@ -7,7 +7,6 @@ IRCClient::IRCClient(int client_fd) {
     this->password = "";
     this->hostname = "localhost";
     this->realname = "";
-    this->operatorFlag = false;
     this->ipAddr = "";
     this->authLevel = 0;
 }

@@ -11,7 +11,6 @@ class IRCClient {
         std::string realname;
         std::vector<std::string> channelInvited;
         std::string line;
-        bool operatorFlag;
         std::string ipAddr;
     public:
 
@@ -27,8 +26,6 @@ class IRCClient {
         void setUsername(std::string username) { this->username = username; }
         void setPassword(std::string password) { this->password = password; }
         bool isAuthentificated() { return this->authLevel == 3; }
-        void setOperator(bool operatorFlag) { this->operatorFlag = operatorFlag; }
-        bool isOperator() { return operatorFlag; }
         std::string getHostname() { return hostname; }
         void setHostname(std::string hostname) { this->hostname = hostname; }
         std::string getRealname() { return realname; }
