@@ -9,6 +9,7 @@ IRCServer::IRCServer(int port, std::string password) {
     pollfd pfd;
     pfd.fd = server_fd;
     pfd.events = POLLIN;
+    hostname = "localhost";
     fds.push_back(pfd);
 }
 
@@ -167,4 +168,14 @@ IRCClient* IRCServer::getClientByNickname(std::string nickname) {
         it++;
     }
     return NULL;
+}
+
+void IRCServer::setHostName(std::string _hostname)
+{
+    hostname = _hostname;
+}
+
+std::string IRCServer::getHostName(void) const
+{
+    return (hostname);
 }

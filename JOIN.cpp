@@ -1,17 +1,16 @@
 #include "Command.hpp"
 #include "CommandRpl.hpp"
 #include <iostream>
-#include "helper.hpp"
 
-// static std::vector<std::string> split(const std::string& s, char delimiter) {
-//     std::vector<std::string> tokens;
-//     std::string token;
-//     std::istringstream tokenStream(s);
-//     while (std::getline(tokenStream, token, delimiter)) {
-//         tokens.push_back(token);
-//     }
-//     return tokens;
-// }
+static std::vector<std::string> split(const std::string& s, char delimiter) {
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(s);
+    while (std::getline(tokenStream, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
 
 bool CommandJoin::sendNameList(IRCClient *client, IRCChannel *channel){
     std::string clients;
@@ -63,7 +62,7 @@ void CommandJoin::handleChannel(std::unordered_map<std::string, std::string> cha
 
         IRCChannel *channel = server->getChannel(it->first);
 
-        if (channel->getLimit() && channel->getNumUsers() >= channel->getLimit()) {
+        if (channel->hasUserLimit() && channel->getNumUsers() >= channel->getLimit()) {
             client->sendMessages(ERR_CHANNELISFULL(client->getNickname(), client->getHostname(), it->first));
             it++;
             continue;

@@ -1,6 +1,9 @@
 #pragma once
 #include "Client.hpp"
 
+#include <ctime>
+#include <sstream>
+
 class IRCClient;
 
 enum ChannelMode {
@@ -23,6 +26,11 @@ class IRCChannel {
         std::vector<IRCClient *> users;
         std::vector<IRCClient *> operators;
     //    std::map<IRCClient *, bool> user_pairs;   to review
+        std::string creationTime;
+        bool _inviteOnly;
+        bool _hasKey;
+        bool _hasTopicProtection;
+        void setCreationTime(void);
     public:
         IRCChannel(std::string name);
         ~IRCChannel();
@@ -37,7 +45,7 @@ class IRCChannel {
         std::vector<IRCClient *> & getClients() { return users; }
         std::vector<IRCClient *> & getOperators() { return operators; }
         std::string getKey() { return key; }
-        void setKey(std::string key) { this->key = key; }
+        void setKey(std::string key) { this->key = key; _hasKey = true;}
         void setTopic(std::string topic) { this->topic = topic; }
         std::string getTopic() { return topic; }
         void setLimit(int limit) { userLimit = limit; }
@@ -45,4 +53,12 @@ class IRCChannel {
         int getNumUsers() { return members.size(); }
         IRCClient *getClient(std::string nickname);
         IRCClient *getOperator(std::string nickname);
+        std::string getCreationTime(void) const;
+        bool isInviteOnly(void) const;
+        void inviteOnly(void);
+        bool hasKey(void) const;
+        void unsetKey(void);
+        bool hasTopicProtection(void) const;
+        void setTopicProtection(void);
+        bool hasUserLimit(void) const;
 };

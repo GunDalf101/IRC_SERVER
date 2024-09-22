@@ -19,7 +19,7 @@ class IRCClient {
 
         unsigned int authLevel;
         int getClientFd() { return client_fd; }
-        std::string getNickname() { return nickname; }
+        std::string getNickname() const { return nickname; }
         std::string getUsername() { return username; }
         std::string getPassword() { return password; }
         void setNickname(std::string nickname) { this->nickname = nickname; }
@@ -37,6 +37,7 @@ class IRCClient {
         bool isInvited(std::string channelName);
         void invite(std::string channelName);
         void removeInvite(std::string channelName);
+        bool operator==(IRCClient rhs) const;
 
 
         virtual void sendMessages(std::string message);
