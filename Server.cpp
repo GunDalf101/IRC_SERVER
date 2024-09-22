@@ -95,6 +95,8 @@ void IRCServer::handleClients(int i) {
     char buffer[1024];
     memset(buffer, 0, 1024);
     int valread = read(fds[i].fd, buffer, 1024);
+    for(int i = 0; buffer[i] != '\0'; i++)
+        std::cout << (char)buffer[i] << " : " << (int) buffer[i] << std::endl;
     if (valread == 0) {
         close(fds[i].fd);
         fds.erase(fds.begin() + i);

@@ -7,28 +7,37 @@
 class IRCClient;
 
 class CommandFactory {
+    private:
+        static std::string toStandardCommand(const std::string &command)
+        {
+            std::string standardCommand;
+            for (size_t i = 0; i < command.length(); i++)
+                standardCommand.append(1, toupper(command.at(i)));
+            return standardCommand;
+        }
     public:
         static ICommand *createCommand(const std::string &command, IRCServer *server)
         {
-            if (command == "NICK") {
+            std::string standardCommand = toStandardCommand(command);
+            if (standardCommand == "NICK") {
                 return new CommandNick(*server);
-            } else if (command == "USER") {
+            } else if (standardCommand == "USER") {
                 return new CommandUser();
-            } else if (command == "PASS") {
+            } else if (standardCommand == "PASS") {
                 return new CommandPass(*server);
-            } else if (command == "JOIN") {
+            } else if (standardCommand == "JOIN") {
                 return new CommandJoin(server);
-            } else if (command == "PART") {
+            } else if (standardCommand == "PART") {
                 return new CommandPart(server);
-            } else if (command == "INVITE") {
+            } else if (standardCommand == "INVITE") {
                 return new CommandInvite(server);
-            } else if (command == "KICK") {
+            } else if (standardCommand == "KICK") {
                 return new CommandKick(server);
-            } else if (command == "TOPIC") {
+            } else if (standardCommand == "TOPIC") {
                 return new CommandTopic(server);
-            } else if (command == "PRIVMSG") {
+            } else if (standardCommand == "PRIVMSG") {
                 return new CommandPrivMsg(*server);
-            } else if (command == "MODE") {
+            } else if (standardCommand == "MODE") {
                 return new CommandMode(*server);
             } else {
                 return NULL;
