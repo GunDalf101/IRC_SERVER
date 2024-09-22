@@ -1,7 +1,6 @@
 #include "Command.hpp"
 #include <iostream>
 #include <string>
-#include "helper.hpp"
 
 std::vector<std::string> toReqArgs(const std::string &params)
 {

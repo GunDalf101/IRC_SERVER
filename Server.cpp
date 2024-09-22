@@ -1,7 +1,6 @@
 #include "Server.hpp"
 #include "CommandFactory.hpp"
 #include <sys/_pthread/_pthread_once_t.h>
-#include "helper.hpp"
 
 IRCServer::IRCServer(int port, std::string password) {
     this->password = password;

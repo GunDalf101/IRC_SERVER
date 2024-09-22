@@ -3,6 +3,8 @@
 #include "Client.hpp"
 #include "Channel.hpp"
 
+std::vector<std::string> split(const std::string& s, char delimiter);
+std::vector<std::string> toReqArgs(const std::string &params);
 
 class ICommand;
 
