@@ -1,17 +1,7 @@
 #include "Command.hpp"
 #include <iostream>
 #include <string>
-
-std::vector<std::string> split(const std::string &str, char delimiter) {
-    std::vector<std::string> result;
-    std::string token;
-    std::stringstream ss(str);
-
-    while (std::getline(ss, token, delimiter))
-        result.push_back(token);
-
-    return result;
-}
+#include "helper.hpp"
 
 std::vector<std::string> toReqArgs(const std::string &params)
 {
@@ -116,7 +106,6 @@ void CommandUser::execute(IRCClient *client, const std::string &params)
         return;
 
     std::vector<std::string> args = toReqArgs(params);
-    std::cout << args.size() << std::endl;
     if (args.size() < 4)
     {
         client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "USER"));

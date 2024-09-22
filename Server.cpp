@@ -1,6 +1,7 @@
 #include "Server.hpp"
 #include "CommandFactory.hpp"
 #include <sys/_pthread/_pthread_once_t.h>
+#include "helper.hpp"
 
 IRCServer::IRCServer(int port, std::string password) {
     this->password = password;
@@ -94,14 +95,16 @@ void IRCServer::handleClients(int i) {
     char buffer[1024];
     memset(buffer, 0, 1024);
     int valread = read(fds[i].fd, buffer, 1024);
-    for(int i = 0; buffer[i] != '\0'; i++)
-        std::cout << (char)buffer[i] << " : " << (int) buffer[i] << std::endl;
     if (valread == 0) {
         close(fds[i].fd);
         fds.erase(fds.begin() + i);
     } else {
-        std::cout << "Received: " << buffer << std::endl;
-        parseCommands(buffer, fds[i].fd);
+        std::vector<std::string> commands = split(std::string(buffer), 0x0a);
+        for(size_t j = 0; j < commands.size(); j++)
+        {
+            std::cout << "Received: " << commands[j] << std::endl;
+            parseCommands(commands[j], fds[i].fd);
+        }
     }
 }
 

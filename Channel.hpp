@@ -22,6 +22,7 @@ class IRCChannel {
         std::vector<IRCClient *> members;
         std::vector<IRCClient *> users;
         std::vector<IRCClient *> operators;
+    //    std::map<IRCClient *, bool> user_pairs;   to review
     public:
         IRCChannel(std::string name);
         ~IRCChannel();

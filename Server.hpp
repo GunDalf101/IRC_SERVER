@@ -3,6 +3,7 @@
 #include "Client.hpp"
 #include "Channel.hpp"
 
+
 class ICommand;
 
 class IRCServer {

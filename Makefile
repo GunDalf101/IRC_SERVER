@@ -10,7 +10,8 @@ SRCS = webserv.cpp \
 		Channel.cpp \
 		JOIN.cpp \
 		TOPIC.cpp \
-		INVITE.cpp
+		INVITE.cpp \
+		
 
 OBJS = $(SRCS:.cpp=.o)
 
