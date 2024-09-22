@@ -151,5 +151,5 @@ class CommandMode : public ICommand {
         }
 };
 
-std::vector<std::string> split(const std::string& s, char delimiter);
+// std::vector<std::string> split(const std::string& s, char delimiter);
 std::vector<std::string> toReqArgs(const std::string &params);
