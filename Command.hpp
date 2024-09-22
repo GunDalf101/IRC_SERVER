@@ -1,6 +1,7 @@
 #pragma once
 #include "Server.hpp"
 #include <unordered_map>
+#include <sstream>
 
 class IRCClient;
 
@@ -136,12 +137,12 @@ class CommandTopic : public ICommand {
 class CommandMode : public ICommand {
     private:
         IRCServer &server;
+        std::string name;
+        void replyWithTargetState(IRCClient *client, std::string target);
+        std::string intToString(int i);
     public:
-        CommandMode(IRCServer& server) : server(server) {}
-        void execute(IRCClient *client, const std::string &params) {
-            (void)client;
-            (void)params;
-        }
+        CommandMode(IRCServer& server) : server(server), name("MODE") {}
+        void execute(IRCClient *client, const std::string &params);
         bool canExecute(IRCClient *client) {
             return client->isAuthentificated();
         }
@@ -150,4 +151,5 @@ class CommandMode : public ICommand {
         }
 };
 
-// std::vector<std::string> split(const std::string& s, char delimiter);
+std::vector<std::string> split(const std::string& s, char delimiter);
+std::vector<std::string> toReqArgs(const std::string &params);

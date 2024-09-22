@@ -7,6 +7,11 @@ IRCChannel::IRCChannel(std::string name) : name(name)
     type = "";
     key = "";
     userLimit = 0;
+    setCreationTime();
+    _inviteOnly = false;
+    _hasKey = false;
+    _hasTopicProtection = false;
+    userLimit = -1;
 }
 
 IRCChannel::~IRCChannel()
@@ -82,3 +87,49 @@ IRCClient *IRCChannel::getOperator(std::string nickname) {
     return NULL;
 }
 
+void IRCChannel::setCreationTime(void)
+{
+    std::ostringstream oss;
+    oss << time(NULL);
+    creationTime = oss.str();
+}
+
+bool IRCChannel::isInviteOnly(void) const
+{
+    return (_inviteOnly);
+}
+
+void IRCChannel::inviteOnly(void)
+{
+    _inviteOnly = true;
+}
+
+bool IRCChannel::hasKey(void) const
+{
+    return (_hasKey);
+}
+
+void IRCChannel::unsetKey(void)
+{
+    _hasKey = false;
+}
+
+bool IRCChannel::hasTopicProtection(void) const
+{
+    return (_hasTopicProtection);
+}
+
+void IRCChannel::setTopicProtection(void)
+{
+    _hasTopicProtection = true;
+}
+
+bool IRCChannel::hasUserLimit(void) const
+{
+    return (userLimit != -1);
+}
+
+std::string IRCChannel::getCreationTime(void) const
+{
+    return (creationTime);
+}

@@ -10,7 +10,8 @@ SRCS = webserv.cpp \
 		Channel.cpp \
 		JOIN.cpp \
 		TOPIC.cpp \
-		INVITE.cpp
+		INVITE.cpp \
+		MODE.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
@@ -18,6 +19,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS) webserv.hpp
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
+	make clean
 
 %.o: %.cpp
 	${CC} ${CFLAGS} -c $< -o $@

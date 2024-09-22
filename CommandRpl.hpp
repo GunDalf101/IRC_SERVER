@@ -24,7 +24,7 @@
 #define ERR_NOSUCHNICK(hostname, nick, nick2) ":" + hostname + " 401 " + nick + " " + nick2 + " :No such nick\r\n"
 #define ERR_KEYSET(hostname, nick, chann) ":" + hostname + " 467 " + nick + " " + chann + " :Channel key already set\r\n"
 #define ERR_UNKNOWNMODE(hostname, nick, c) ":" + hostname + " 472 " + nick + " " + c + " :is unknown mode char to me\r\n"
-#define ERR_NOTREGISTERED(nick, hostname) ":" + hostname + " 451 " + nick + " :You have not registered\r\n"
+#define ERR_NOTREGISTERED(hostname, nick) ":" + hostname + " 451 " + nick + " :You have not registered\r\n"
 #define ERR_USERONCHANNEL(hostname, nick, nick2, chann) ":" + hostname + " 443 " + nick + " " + nick2 + " " + chann + " :is already on channel\r\n"
 #define RPL_INVITING(hostname, nick, invited, chann) ":" + hostname + " 341 " + nick + " " + invited + " " + chann + " :Inviting " + invited + " to " + chann + "\r\n"
 #define ERR_NOTONCHANNEL(hostname, chann) ":" + hostname + " 442 " + chann + " " + ":You're not on that channel\r\n"
@@ -64,4 +64,7 @@
 #define ERR_NOTEXTTOSEND(nick, hostname) ":" + hostname + " 412 " + nick + " :No text to send\r\n"
 #define RPL_KICK(nick, username, hostname, kicked, channel, reason) ":" + nick + "!" + "~" + username + "@" + hostname + " KICK " + channel + " " + kicked + " " + reason + "\r\n"
 #define NICKNAME_RPLY(nickname, username, hostname, newNickName) ":" + nickname + "!~" + username + "@" + hostname + " NICK :" + newNickName  + "\r\n"
+#define RPL_UMODEIS(hostname, sender, target, modes) ":" + hostname +  " 221 " + sender + " " + target + " " + modes + "\r\n"
+#define ERR_USERSDONTMATCH(sender) sender + " :Cant change mode for other users"
+#define RPL_CREATIONTIME(hostname, nickname, channelname, creationtime) ":" + hostname + " 329 " + nickname + " " + channelname + " " + creationtime + "\r\n"
 #endif

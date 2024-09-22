@@ -2,7 +2,7 @@
 
 IRCClient::IRCClient(int client_fd) {
     this->client_fd = client_fd;
-    this->nickname = "";
+    this->nickname = "*";
     this->username = "";
     this->password = "";
     this->hostname = "localhost";
@@ -47,4 +47,9 @@ void IRCClient::invite(std::string channelName) {
 
 void IRCClient::removeInvite(std::string channelName) {
     channelInvited.erase(std::remove(channelInvited.begin(), channelInvited.end(), channelName), channelInvited.end());
+}
+
+bool IRCClient::operator==(IRCClient rhs) const
+{
+    return (getNickname() == rhs.getNickname());
 }

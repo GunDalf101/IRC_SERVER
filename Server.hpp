@@ -12,6 +12,7 @@ class IRCServer {
         std::vector<struct pollfd> fds;
         std::unordered_map<int, IRCClient*> clients;
         std::unordered_map<std::string, IRCChannel*> channels;
+        std::string hostname;
 
         int setupMainSocket(int port);
         void handleConnection();
@@ -28,4 +29,6 @@ class IRCServer {
         std::string &getPassword();
         ~IRCServer();
         void run();
+        void setHostName(std::string _hostname);
+        std::string getHostName(void) const;
 };
