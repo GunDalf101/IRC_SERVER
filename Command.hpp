@@ -138,8 +138,7 @@ class CommandMode : public ICommand {
     private:
         IRCServer &server;
         std::string name;
-        void replyWithTargetState(IRCClient *client, std::string target);
-        std::string intToString(int i);
+        void replyWithChannelState(IRCClient *client, std::string target, bool isOp);
     public:
         CommandMode(IRCServer& server) : server(server), name("MODE") {}
         void execute(IRCClient *client, const std::string &params);

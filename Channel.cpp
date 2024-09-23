@@ -64,9 +64,9 @@ void IRCChannel::removeOperator(IRCClient *client)
 
 IRCClient *IRCChannel::getClient(std::string nickname) {
     //print all members
-    for (std::vector<IRCClient *>::iterator it = members.begin(); it != members.end(); it++) {
-        std::cout << (*it)->getNickname() << std::endl;
-    }
+    // for (std::vector<IRCClient *>::iterator it = members.begin(); it != members.end(); it++) {
+    //     std::cout << (*it)->getNickname() << std::endl;
+    // }
     for (std::vector<IRCClient *>::iterator it = members.begin(); it != members.end(); it++) {
         if ((*it)->getNickname() == nickname)
             return *it;
@@ -99,6 +99,11 @@ void IRCChannel::inviteOnly(void)
     _inviteOnly = true;
 }
 
+void IRCChannel::unsetInviteOnly(void)
+{
+    _inviteOnly = false;
+}
+
 bool IRCChannel::hasKey(void) const
 {
     return (_hasKey);
@@ -119,6 +124,11 @@ void IRCChannel::setTopicProtection(void)
     _hasTopicProtection = true;
 }
 
+void IRCChannel::unsetTopicProtection(void)
+{
+    _hasTopicProtection = false;
+}
+
 bool IRCChannel::hasUserLimit(void) const
 {
     return (userLimit != -1);
@@ -127,4 +137,42 @@ bool IRCChannel::hasUserLimit(void) const
 std::string IRCChannel::getCreationTime(void) const
 {
     return (creationTime);
+}
+
+std::string IRCChannel::intToString(int i)
+{
+    std::ostringstream oss;
+    
+    oss << i;
+    return oss.str();   
+}
+
+std::string IRCChannel::getModes(bool isOp)
+{
+    std::string modes;
+
+    modes += '+';
+    if (hasKey() && isOp)
+        modes += 'k';
+    if (hasUserLimit())
+        modes += 'l';
+    if (isInviteOnly())
+        modes += 'i';
+    if (hasTopicProtection())
+        modes += 't';
+    if (hasKey() && isOp)
+        modes += getKey() + " ";
+    if (hasUserLimit())
+        modes.append(' ' + intToString(getLimit()));
+    return (modes);
+}
+
+bool IRCChannel::isMember(std::string nick)
+{
+    return (getClient(nick) != NULL);
+}
+
+bool IRCChannel::isOp(std::string nick)
+{
+    return (getOperator(nick) != NULL);
 }
