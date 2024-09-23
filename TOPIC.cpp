@@ -34,5 +34,5 @@ void CommandTopic::execute(IRCClient *client, const std::string &params)
         return;
     }
     channel->setTopic(topic);
-    channel->notifyClients(RPL_TOPIC(client->getHostname(), client->getNickname(), channelName, topic));
+    channel->notifyClients(RPL_TOPIC(client->getHostname(), client->getNickname(), channelName, topic), client->getNickname());
 }

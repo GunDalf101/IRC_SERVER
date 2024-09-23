@@ -40,7 +40,7 @@ class IRCChannel {
         void addOperator(IRCClient *client);
         void removeOperator(IRCClient *client);
         void removeUser(IRCClient *client);
-        void notifyClients(std::string message);
+        void notifyClients(std::string message, std::string sender);
         bool isClientExists(const std::string &nickname);
         std::string getName() { return name; }
         std::vector<IRCClient *> & getClients() { return users; }
