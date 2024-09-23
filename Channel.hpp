@@ -31,6 +31,7 @@ class IRCChannel {
         bool _hasKey;
         bool _hasTopicProtection;
         void setCreationTime(void);
+        std::string intToString(int i);
     public:
         IRCChannel(std::string name);
         ~IRCChannel();
@@ -56,9 +57,14 @@ class IRCChannel {
         std::string getCreationTime(void) const;
         bool isInviteOnly(void) const;
         void inviteOnly(void);
+        void unsetInviteOnly(void);
         bool hasKey(void) const;
         void unsetKey(void);
         bool hasTopicProtection(void) const;
         void setTopicProtection(void);
+        void unsetTopicProtection(void);
         bool hasUserLimit(void) const;
+        std::string getModes(bool isOp);
+        bool isMember(std::string nick);
+        bool isOp(std::string nick);
 };
