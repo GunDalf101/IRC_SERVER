@@ -1,7 +1,7 @@
 {
     "files.associations": {
         "iosfwd": "cpp",
-        "unordered_map": "cpp",
+        "map": "cpp",
         "__bit_reference": "cpp",
         "__config": "cpp",
         "__debug": "cpp",

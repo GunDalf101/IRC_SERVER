@@ -28,9 +28,9 @@ bool CommandJoin::sendNameList(IRCClient *client, IRCChannel *channel){
     return true;
 }
 
-void CommandJoin::handleChannel(std::unordered_map<std::string, std::string> channelKeyMap, IRCClient *client){
+void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap, IRCClient *client){
     (void)client;
-    std::unordered_map<std::string, std::string>::iterator it;
+    std::map<std::string, std::string>::iterator it;
     it = channelKeyMap.begin();
     while (it != channelKeyMap.end()) {
         if (it->first[0] != '#' || it->first.length() > 50){
@@ -87,7 +87,7 @@ void CommandJoin::execute(IRCClient *client, const std::string &params)
         std::vector<std::string> keys;
         if (paramList.size() > 1)
             keys = split(paramList[1], ',');
-        std::unordered_map<std::string, std::string> channelKeyMap;
+        std::map<std::string, std::string> channelKeyMap;
         for (size_t i = 0; i < channels.size(); ++i) {
             if (i < keys.size()) {
                 channelKeyMap[channels[i]] = keys[i];

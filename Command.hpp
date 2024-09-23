@@ -1,6 +1,6 @@
 #pragma once
 #include "Server.hpp"
-#include <unordered_map>
+#include <map>
 #include <sstream>
 
 class IRCClient;
@@ -61,7 +61,7 @@ class CommandPass : public ICommand {
 class CommandJoin : public ICommand {
     private:
         IRCServer *server;
-        void handleChannel(std::unordered_map<std::string, std::string> channelKeyMap, IRCClient *client);
+        void handleChannel(std::map<std::string, std::string> channelKeyMap, IRCClient *client);
         bool sendNameList(IRCClient *client, IRCChannel *channel);
     public:
         CommandJoin(IRCServer *server) : server(server) {}
