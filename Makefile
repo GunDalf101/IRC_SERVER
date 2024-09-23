@@ -20,7 +20,7 @@ all: $(NAME)
 
 $(NAME): $(OBJS) webserv.hpp
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
-	make clean
+	# make clean
 
 %.o: %.cpp
 	${CC} ${CFLAGS} -c $< -o $@

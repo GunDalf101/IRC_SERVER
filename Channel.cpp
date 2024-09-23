@@ -22,26 +22,21 @@ void IRCChannel::addUser(IRCClient *client)
 {
     members.push_back(client);
     users.push_back(client);
-    notifyClients(client->getNickname() + " has joined the channel.");
+    notifyClients(client->getNickname() + " has joined the channel.", client->getNickname());
 }
 
 void IRCChannel::removeUser(IRCClient *client)
 {
     members.erase(std::remove(members.begin(), members.end(), client), members.end());
     users.erase(std::remove(users.begin(), users.end(), client), users.end());
-    notifyClients(client->getNickname() + " has left the channel.");
+    notifyClients(client->getNickname() + " has left the channel.", client->getNickname());
 }
 
-void IRCChannel::notifyClients(std::string message)
+void IRCChannel::notifyClients(std::string message, std::string sender)
 {
-    for (std::vector<IRCClient *>::iterator it = users.begin(); it != users.end(); it++)
-    {
-        (*it)->sendMessages(message);
-    }
-    for (std::vector<IRCClient *>::iterator it = operators.begin(); it != operators.end(); it++)
-    {
-        (*it)->sendMessages(message);
-    }
+    for (std::vector<IRCClient *>::iterator it = members.begin(); it != members.end(); it++)
+        if (sender != (*it)->getNickname())
+            (*it)->sendMessages(message);
 }
 
 bool IRCChannel::isClientExists(const std::string &nickname)

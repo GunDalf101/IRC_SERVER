@@ -38,7 +38,6 @@ void CommandJoin::handleChannel(std::unordered_map<std::string, std::string> cha
             it++;
             continue;
         }
-        std::cout << "first ->>>>>>["<< it->first << "]\n";
         if (server->getChannel(it->first)) {
             IRCChannel *channel = server->getChannel(it->first);
             if (channel->getKey() != it->second){
@@ -70,7 +69,7 @@ void CommandJoin::handleChannel(std::unordered_map<std::string, std::string> cha
         }
 
         client->sendMessages(RPL_JOIN(client->getNickname(), client->getUsername(), it->first, client->getIpAddr()));
-        channel->notifyClients(RPL_JOIN(client->getNickname(), client->getUsername(), it->first, client->getIpAddr()));
+        channel->notifyClients(RPL_JOIN(client->getNickname(), client->getUsername(), it->first, client->getIpAddr()), client->getNickname());
         if (!channel->getTopic().empty()) {
             client->sendMessages(RPL_TOPIC(client->getHostname(), client->getNickname(), it->first, channel->getTopic()));
         }
