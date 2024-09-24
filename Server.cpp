@@ -8,8 +8,12 @@ IRCServer::IRCServer(int port, std::string password) {
     pollfd pfd;
     pfd.fd = server_fd;
     pfd.events = POLLIN;
-    hostname = "localhost";
     fds.push_back(pfd);
+    char hostbuffer[256];
+    if (gethostname(hostbuffer, sizeof(hostbuffer)) == 0)
+        hostname = hostbuffer;
+    else
+        hostname = "localhost";
 }
 
 IRCServer::~IRCServer() {

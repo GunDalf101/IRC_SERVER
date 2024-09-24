@@ -13,9 +13,8 @@ void CommandTopic::execute(IRCClient *client, const std::string &params)
         topic = topic.substr(colonPos + 1);
     }
     IRCChannel *channel = server->getChannel(channelName);
-    std::cout << "[" + channelName + "]" << "[" + channel->getTopic() + "]" << std::endl;
     if (channel == NULL) {
-        client->sendMessages(ERR_NOSUCHCHANNEL(client->getNickname(), client->getHostname(), channelName));
+        client->sendMessages(ERR_NOSUCHCHANNEL(client->getHostname(), client->getNickname(), channelName));
         return;
     }
     if (channel->getClient(client->getNickname()) == NULL) {
