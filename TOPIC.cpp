@@ -28,7 +28,7 @@ void CommandTopic::execute(IRCClient *client, const std::string &params)
             client->sendMessages(RPL_TOPIC(client->getHostname(), client->getNickname(), channelName, channel->getTopic()));
         return;
     }
-    if (!channel->getOperator(client->getNickname())) {
+    if (!channel->getOperator(client->getNickname()) && channel->getModes(true).find("t") != std::string::npos) {
         client->sendMessages(ERR_CHANOPRIVSNEEDED(client->getNickname(), client->getHostname(), channelName));
         return;
     }

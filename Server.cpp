@@ -156,13 +156,13 @@ IRCChannel* IRCServer::getChannel(std::string channelName) {
     return NULL;
 }
 
-std::unordered_map<int, IRCClient*> IRCServer::getCliens()
+std::map<int, IRCClient*> IRCServer::getCliens()
 {
     return this->clients;
 }
 
 IRCClient* IRCServer::getClientByNickname(std::string nickname) {
-    std::unordered_map<int, IRCClient*>::iterator it = clients.begin();
+    std::map<int, IRCClient*>::iterator it = clients.begin();
     while (it != clients.end()) {
         std::cout << it->second->getNickname() << std::endl;
         if (it->second->getNickname() == nickname) {

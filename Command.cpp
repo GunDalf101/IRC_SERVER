@@ -83,8 +83,8 @@ void CommandNick::execute(IRCClient *client, const std::string &params)
 
 bool CommandNick::isAlreadyInuse(const std::string &new_nickname)
 {
-    std::unordered_map<int, IRCClient*> clients = server.getCliens();
-    std::unordered_map<int, IRCClient*>::iterator i = clients.begin();
+    std::map<int, IRCClient*> clients = server.getCliens();
+    std::map<int, IRCClient*>::iterator i = clients.begin();
     while (i != clients.end())
     {
         if (!(*i).second->getNickname().compare(new_nickname))

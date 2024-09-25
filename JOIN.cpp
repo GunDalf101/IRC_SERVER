@@ -28,9 +28,9 @@ bool CommandJoin::sendNameList(IRCClient *client, IRCChannel *channel){
     return true;
 }
 
-void CommandJoin::handleChannel(std::unordered_map<std::string, std::string> channelKeyMap, IRCClient *client){
+void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap, IRCClient *client){
     (void)client;
-    std::unordered_map<std::string, std::string>::iterator it;
+    std::map<std::string, std::string>::iterator it;
     it = channelKeyMap.begin();
     while (it != channelKeyMap.end()) {
         if (it->first[0] != '#' || it->first.length() > 50){
@@ -40,7 +40,8 @@ void CommandJoin::handleChannel(std::unordered_map<std::string, std::string> cha
         }
         if (server->getChannel(it->first)) {
             IRCChannel *channel = server->getChannel(it->first);
-            if (channel->getKey() != it->second){
+            std::cout << "Channel mode: " << channel->getModes(true) << std::endl;
+            if (channel->getKey() != it->second  && channel->getModes(true).find("k") != std::string::npos){
                 client->sendMessages(ERR_BADCHANNELKEY(client->getNickname(), client->getHostname(), it->first));
                 it++;
                 continue;
@@ -57,7 +58,8 @@ void CommandJoin::handleChannel(std::unordered_map<std::string, std::string> cha
             server->createChannel(it->first);
             IRCChannel *channel = server->getChannel(it->first);
             channel->addOperator(client);
-            channel->setKey(it->second);
+            if (!it->second.empty())
+                channel->setKey(it->second);
         }
 
         IRCChannel *channel = server->getChannel(it->first);
@@ -87,7 +89,7 @@ void CommandJoin::execute(IRCClient *client, const std::string &params)
         std::vector<std::string> keys;
         if (paramList.size() > 1)
             keys = split(paramList[1], ',');
-        std::unordered_map<std::string, std::string> channelKeyMap;
+        std::map<std::string, std::string> channelKeyMap;
         for (size_t i = 0; i < channels.size(); ++i) {
             if (i < keys.size()) {
                 channelKeyMap[channels[i]] = keys[i];
