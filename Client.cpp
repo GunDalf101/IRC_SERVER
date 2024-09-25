@@ -5,10 +5,14 @@ IRCClient::IRCClient(int client_fd) {
     this->nickname = "*";
     this->username = "";
     this->password = "";
-    this->hostname = "localhost";
     this->realname = "";
     this->ipAddr = "";
     this->authLevel = 0;
+    char hostbuffer[256];
+    if (gethostname(hostbuffer, sizeof(hostbuffer)) == 0)
+        hostname = hostbuffer;
+    else
+        hostname = "localhost";
 }
 
 IRCClient::~IRCClient() {
