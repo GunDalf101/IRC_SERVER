@@ -51,7 +51,7 @@ void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap
                 it++;
                 continue;
             }
-            channel->addUser(client);
+            channel->addMember(client);
         }
 
         if (!server->getChannel(it->first)) {
