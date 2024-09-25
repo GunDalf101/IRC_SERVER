@@ -2,27 +2,6 @@
 #include <iostream>
 #include <string>
 
-std::vector<std::string> toReqArgs(const std::string &params)
-{
-    size_t index = params.find(':');
-    std::string co = params;
-    if(index != std::string::npos)
-        co = params.substr(0, index);
-
-    std::vector<std::string> substrings;
-    std::stringstream ss(co);
-    std::string param;
-    
-    while (std::getline(ss, param, ' '))
-        if(!param.empty())
-            substrings.push_back(param);
-
-    if (index != std::string::npos)
-        substrings.push_back(params.substr(index + 1, params.length() - index - 1));
-
-    return substrings;
-}
-
 std::string getColonArg(std::string arg)
 {
     if(!arg.empty() && arg.at(0) == ':')

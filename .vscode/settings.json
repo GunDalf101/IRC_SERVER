@@ -47,7 +47,6 @@
         "iterator": "cpp",
         "limits": "cpp",
         "locale": "cpp",
-        "map": "cpp",
         "memory": "cpp",
         "mutex": "cpp",
         "new": "cpp",
@@ -66,6 +65,7 @@
         "typeinfo": "cpp",
         "utility": "cpp",
         "vector": "cpp",
-        "filesystem": "cpp"
+        "filesystem": "cpp",
+        "unordered_map": "cpp"
     }
 }

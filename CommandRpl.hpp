@@ -63,7 +63,7 @@
 #define RPL_QUIT(nick, host, message) ":" + nick + "!" + "~" + nick + "@" + host + " QUIT : " + message + "\r\n"
 #define ERR_NOTEXTTOSEND(nick, hostname) ":" + hostname + " 412 " + nick + " :No text to send\r\n"
 #define RPL_KICK(nick, username, hostname, kicked, channel, reason) ":" + nick + "!" + "~" + username + "@" + hostname + " KICK " + channel + " " + kicked + " " + reason + "\r\n"
-#define NICKNAME_RPLY(nickname, username, hostname, newNickName) ":" + nickname + "!~" + username + "@" + hostname + " NICK :" + newNickName  + "\r\n"
+#define NICKNAME_RPLY(nickname, username, hostname, newNickName) ":" + nickname + "!~" +  + "@" + hostname + " NICK :" + newNickName  + "\r\n"
 #define RPL_UMODEIS(hostname, sender, target, modes) ":" + hostname +  " 221 " + sender + " " + target + " " + modes + "\r\n"
 #define ERR_USERSDONTMATCH(sender) sender + " :Cant change mode for other users"
 #define RPL_CREATIONTIME(hostname, nickname, channelname, creationtime) ":" + hostname + " 329 " + nickname + " " + channelname + " " + creationtime + "\r\n"

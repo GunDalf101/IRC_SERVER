@@ -103,7 +103,7 @@ void IRCServer::handleClients(int i) {
         close(fds[i].fd);
         fds.erase(fds.begin() + i);
     } else {
-        std::vector<std::string> commands = split(std::string(buffer), 0x0a);
+        std::vector<std::string> commands = split(std::string(buffer), '\n');
         for(size_t j = 0; j < commands.size(); j++)
         {
             std::cout << "Received: " << commands[j] << std::endl;

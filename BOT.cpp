@@ -1,37 +1,117 @@
-#include <cstring>
-#include <iostream>
-#include <netinet/in.h>
-#include <sys/socket.h>
-#include <unistd.h>
-#include <arpa/inet.h>
+#include "BOT.hpp"
+
+size_t BOT::sendMessage(std::string message)
+{
+    return send(this->clientSocket, message.c_str(), message.size(), 0);
+}
+
+void BOT::parseReply(std::string &reply)
+{
+    if(reply.at(0) == ':')
+        reply.erase(0, 1);
+    std::vector<std::string> args = toReqArgs(reply);
+    std::cout << reply << std::endl;
+}
+
+bool BOT::run()
+{
+    if(!connectToServer())
+        exit(2);
+    auth();
+    std::string line;
+    while (true)
+    {
+        line = recvLine();
+        if(!line.empty())
+            parseReply(line);
+    }
+};
+
+bool BOT::connectToServer()
+{
+    clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+    sockaddr_in serverAddress;
+    serverAddress.sin_family = AF_INET;
+    serverAddress.sin_port = htons(port);
+    serverAddress.sin_addr.s_addr = inet_addr(this->host.c_str());
+    if(connect(clientSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)))
+        return false;
+    return true;
+};
+
+std::string BOT::recvLine()
+{
+    char buffer[2] = {0};
+
+    std::string line = "";
+    
+    int readBytes;
+    while (true)
+    {
+        readBytes = read(this->clientSocket, buffer, 1);
+        if(readBytes == 0)
+            return line;
+        buffer[readBytes] = 0;
+        if(buffer[0] == '\n' || buffer[0] == '\r')
+            return line;
+        line.append(buffer);
+    }
+    return line;
+}
+
+bool BOT::auth()
+{
+    std::string authReq = "pass " + this->password + "\nNICK bot\nUSER bot 0 * :iam just a bot\n";
+    this->sendMessage(authReq);
+    // char buffer[2048] = {0};
+    // int bytesReceived = 1;
+    // while(bytesReceived)
+    // {
+    //     bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+    //     std::cout << buffer << std::endl;
+    // }
+    return true;
+}
+
+
+
+
+
+
+
+
+
+
+
 
 int main(int argc, char *argv[])
 {
     if (argc != 1 && argc != 2) {
         int port = atoi(argv[1]);
         std::string pass = argv[2];
+
+        BOT *bot = new BOT("127.0.0.1", port, pass);
+        bot->run();
+
     // std::cerr << "Usage: " << argv[0] << " <port> <password>" << std::endl;
 
-    int clientSocket = socket(AF_INET, SOCK_STREAM, 0);
-    sockaddr_in serverAddress;
-    serverAddress.sin_family = AF_INET;
-    serverAddress.sin_port = htons(port);
-    serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
+//     int clientSocket = socket(AF_INET, SOCK_STREAM, 0);
+//     sockaddr_in serverAddress;
+//     serverAddress.sin_family = AF_INET;
+//     serverAddress.sin_port = htons(port);
+//     serverAddress.sin_addr.s_addr = inet_addr("127.0.0.1");
 
-    std::cout <<  connect(clientSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) << std::endl;
-    // std::string s = "PASS a\n\r" + pass + "\nNICK bot\nUSER bot a a a";
-    send(clientSocket, "PASS coco\r\n", strlen("PASS coco\r\n"), 0);
-    send(clientSocket, "NICK bot\r\n", strlen("NICK bot\r\n"), 0);
-    send(clientSocket, "USER bot a a a\r\n", strlen("USER bot a a a\r\n"), 0);
-    // send(clientSocket, s.c_str(), strlen(s.c_str()), 0);
-    char buffer[2048] = {0};
-    int bytesReceived = 1;
-    while(bytesReceived)
-    {
-        bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
-        std::cout << buffer << std::endl;
-    }
-    close(clientSocket);
+//     std::string req = "pass " + pass + "\r\nNICK bot\r\nUSER bot 0 * :iam just a bot";
+//     std::cout <<  connect(clientSocket, (struct sockaddr*)&serverAddress, sizeof(serverAddress)) << std::endl;
+//     send(clientSocket, req.c_str(), req.size(), 0);
+//     char buffer[2048] = {0};
+//     int bytesReceived = 1;
+//     while(bytesReceived)
+//     {
+//         bytesReceived = recv(clientSocket, buffer, sizeof(buffer) - 1, 0);
+//         std::cout << buffer << std::endl;
+//     }
+//     close(clientSocket);
     }
     return 0;
 }
