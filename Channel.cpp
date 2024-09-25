@@ -167,9 +167,18 @@ std::string IRCChannel::getModes(bool isOp)
     return (modes);
 }
 
+IRCClient *IRCChannel::getMember(std::string nickname)
+{
+    for (std::vector<IRCClient *>::iterator it = members.begin(); it != members.end(); it++) {
+        if ((*it)->getNickname() == nickname)
+            return *it;
+    }
+    return NULL;
+}
+
 bool IRCChannel::isMember(std::string nick)
 {
-    return (getClient(nick) != NULL);
+    return (getMember(nick) != NULL);
 }
 
 bool IRCChannel::isOp(std::string nick)

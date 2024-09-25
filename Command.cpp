@@ -155,7 +155,7 @@ void CommandPart::execute(IRCClient *client, const std::string &params)
         {
             if(channel->isClientExists(client->getNickname()))
             {
-                channel->removeUser(client);
+                channel->removeMember(client);
                 client->sendMessages(":" + client->getNickname() + "!~" + client->getUsername() + "@" + client->getHostname() + " PART " + channelName);
             } else
                 client->sendMessages(ERR_NOTONCHANNEL(client->getHostname(), channelName));

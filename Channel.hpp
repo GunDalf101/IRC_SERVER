@@ -67,4 +67,5 @@ class IRCChannel {
         std::string getModes(bool isOp);
         bool isMember(std::string nick);
         bool isOp(std::string nick);
+        IRCClient *getMember(std::string nickname);
 };
