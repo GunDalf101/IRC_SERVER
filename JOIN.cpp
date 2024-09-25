@@ -40,7 +40,8 @@ void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap
         }
         if (server->getChannel(it->first)) {
             IRCChannel *channel = server->getChannel(it->first);
-            if (channel->getKey() != it->second){
+            std::cout << "Channel mode: " << channel->getModes(true) << std::endl;
+            if (channel->getKey() != it->second  && channel->getModes(true).find("k") != std::string::npos){
                 client->sendMessages(ERR_BADCHANNELKEY(client->getNickname(), client->getHostname(), it->first));
                 it++;
                 continue;
@@ -50,14 +51,15 @@ void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap
                 it++;
                 continue;
             }
-            channel->addUser(client);
+            channel->addMember(client);
         }
 
         if (!server->getChannel(it->first)) {
             server->createChannel(it->first);
             IRCChannel *channel = server->getChannel(it->first);
             channel->addOperator(client);
-            channel->setKey(it->second);
+            if (!it->second.empty())
+                channel->setKey(it->second);
         }
 
         IRCChannel *channel = server->getChannel(it->first);

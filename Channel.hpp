@@ -22,8 +22,8 @@ class IRCChannel {
         // ChannelMode mode;
         std::string key;
         int userLimit;
-        std::vector<IRCClient *> members;
         std::vector<IRCClient *> users;
+        std::vector<IRCClient *> members;
         std::vector<IRCClient *> operators;
     //    std::map<IRCClient *, bool> user_pairs;   to review
         std::string creationTime;
@@ -36,14 +36,14 @@ class IRCChannel {
         IRCChannel(std::string name);
         ~IRCChannel();
 
-        void addUser(IRCClient *client);
+        void addMember(IRCClient *client);
         void addOperator(IRCClient *client);
         void removeOperator(IRCClient *client);
-        void removeUser(IRCClient *client);
+        void removeMember(IRCClient *client);
         void notifyClients(std::string message, std::string sender);
         bool isClientExists(const std::string &nickname);
         std::string getName() { return name; }
-        std::vector<IRCClient *> & getClients() { return users; }
+        std::vector<IRCClient *> & getClients() { return members; }
         std::vector<IRCClient *> & getOperators() { return operators; }
         std::string getKey() { return key; }
         void setKey(std::string key) { this->key = key; _hasKey = true;}
@@ -51,7 +51,7 @@ class IRCChannel {
         std::string getTopic() { return topic; }
         void setLimit(int limit) { userLimit = limit; }
         int getLimit() { return userLimit; }
-        int getNumUsers() { return members.size(); }
+        int getNumUsers() { return users.size(); }
         IRCClient *getClient(std::string nickname);
         IRCClient *getOperator(std::string nickname);
         std::string getCreationTime(void) const;
@@ -67,4 +67,5 @@ class IRCChannel {
         std::string getModes(bool isOp);
         bool isMember(std::string nick);
         bool isOp(std::string nick);
+        IRCClient *getMember(std::string nickname);
 };

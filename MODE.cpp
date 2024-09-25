@@ -26,30 +26,17 @@ static bool isKnownMod(char c)
     return (isTypeB(c) || isTypeC(c) || isTypeD(c));
 }
 
-// static void squeezeModes(std::string &modes)
-// {
-//     uint i;
-//     uint lastc;
-//     if (modes.size() == 0)
-//         return;
-//     i = lastc = 0;
-//     while (i < modes.size())
-//     {
-//         if (!isModefier(modes[i]))
-//             lastc = i;
-//         else if (i && isModefier(modes[i]) && i + 1 < modes.size() && !isModefier(modes[i + 1]))
-//         {
-//             if (lastc == 0)
-//                 modes.erase(lastc, i);
-//             else
-//                 modes.erase(lastc + 1, i - lastc - 1);
-//             i = lastc + 1;
-//         }
-//         if (i + 1 == modes.size() && isModefier(modes[i]))
-//             modes.erase(lastc + 1, i - lastc);
-//         i++;
-//     }
-// }
+static bool isValidKey(std::string key)
+{
+    uint i = 0;
+
+    while (i < key.size())
+    {
+        if (key[i] == ' ')
+            return (false);
+    }
+    return (true);
+}
 
 static void addResultMode(bool set, std::string& resultMode, char c)
 {
@@ -129,23 +116,22 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                 }
                 std::string modes = paramArr[1];
                 paramArr.erase(paramArr.begin(), paramArr.begin() + 2);
-                // squeezeModes(modes);
                 std::reverse(paramArr.begin(),paramArr.end());
                 uint i = 0;
-                bool set = false;
+                enum Mod { Default, Set, Unset } mod;
                 std::string resultMode;
                 std::vector<std::string> resultArgs;
                 while (i < modes.size())
                 {
                     if (isModefier(modes[i]))
                     {
-                        set = (modes[i] == '+' ? true : false);
+                        mod = (modes[i] == '+' ? Set : Unset);
                         i++;
                         continue;
                     }
                     if (isKnownMod(modes[i]))
                     {
-                        if ((isTypeB(modes[i]) || (isTypeC(modes[i]) && set)) && paramArr.empty())
+                        if ((isTypeB(modes[i]) || (isTypeC(modes[i]) && (mod == Set))) && paramArr.empty())
                         {
                             i++;
                             continue;
@@ -158,11 +144,11 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                             {
                                 if (ch.isMember(nick))
                                 {
-                                    if (set)
+                                    if (mod == Set)
                                     {
                                         if (!ch.isOp(nick))
                                         {
-                                            IRCClient *c = ch.getClient(nick);
+                                            IRCClient *c = ch.getMember(nick);
                                             ch.addOperator(c);
                                             resultArgs.push_back(nick);
                                             addResultMode(true, resultMode, modes[i]);
@@ -172,7 +158,7 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                                     {
                                         if (ch.isOp(nick))
                                         {
-                                            IRCClient *c = ch.getClient(nick);
+                                            IRCClient *c = ch.getMember(nick);
                                             ch.removeOperator(c);
                                             resultArgs.push_back(nick);
                                             addResultMode(false, resultMode, modes[i]);
@@ -191,15 +177,22 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                         }
                         else if (isTypeC(modes[i]))
                         {
-                            if (set)
+                            if (mod == Set)
                             {
                                 std::string arg = paramArr.back();
                                 paramArr.pop_back();
                                 if (modes[i] == 'k')
                                 {
-                                    ch.setKey(arg);
-                                    resultArgs.push_back(arg);
-                                    addResultMode(true, resultMode, modes[i]);
+                                    if (ch.hasKey() && isValidKey(arg))
+                                    {
+                                        ch.setKey(arg);
+                                        resultArgs.push_back(arg);
+                                        addResultMode(true, resultMode, modes[i]);
+                                    }
+                                    else
+                                    {
+                                        client->sendMessages(ERR_INVALIDKEY(client->getNickname(), ch.getName()));
+                                    }
                                 }
                                 else
                                 {
@@ -208,6 +201,10 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                                         ch.setLimit(std::stoi(arg) <= 0 ? -1 : std::stoi(arg));
                                         resultArgs.push_back(arg);
                                         addResultMode(true, resultMode, modes[i]);
+                                    }
+                                    else
+                                    {
+                                        
                                     }
                                 }
                             }
@@ -227,7 +224,7 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                         }
                         else if (isTypeD(modes[i]))
                         {
-                            if (set)
+                            if (mod == Set)
                             {
                                 if (modes[i] == 'i' && !ch.isInviteOnly())
                                 {
@@ -262,6 +259,7 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                     i++;
                 }
                 client->sendMessages(RPL_CHANNELMODEIS(server.getHostName(), client->getNickname(), channel, buildResultModeWithArgs(resultMode, resultArgs)));
+                ch.notifyClients(RPL_CHANNELMODEIS(server.getHostName(), client->getNickname(), channel, buildResultModeWithArgs(resultMode, resultArgs)), client->getNickname());
             }
         }
         else
