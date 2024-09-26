@@ -1,5 +1,0 @@
-PASS 9999
-NICK b
-USER b b b b
-JOIN #c
-
