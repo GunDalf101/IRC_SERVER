@@ -259,6 +259,8 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                     i++;
                 }
                 client->sendMessages(RPL_CHANNELMODEIS(server.getHostName(), client->getNickname(), channel, buildResultModeWithArgs(resultMode, resultArgs)));
+                ch.notifyClients(RPL_MODE(client->getNickname(), client->getUsername(), server.getHostName(), ch.getName(), buildResultModeWithArgs(resultMode, resultArgs)), client->getNickname());
+                client->sendMessages(RPL_MODE(client->getNickname(), client->getUsername(), server.getHostName(), ch.getName(), buildResultModeWithArgs(resultMode, resultArgs)));
                 ch.notifyClients(RPL_CHANNELMODEIS(server.getHostName(), client->getNickname(), channel, buildResultModeWithArgs(resultMode, resultArgs)), client->getNickname());
             }
         }
