@@ -3,6 +3,7 @@
 #include <map>
 #include <sstream>
 
+
 class IRCClient;
 
 class ICommand {

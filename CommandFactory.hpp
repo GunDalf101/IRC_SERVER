@@ -2,6 +2,7 @@
 
 #include "Client.hpp"
 #include "Command.hpp"
+#include "BOT.hpp"
 #include "Server.hpp"
 
 class IRCClient;
@@ -39,6 +40,8 @@ class CommandFactory {
                 return new CommandPrivMsg(*server);
             } else if (standardCommand == "MODE") {
                 return new CommandMode(*server);
+            } else if (standardCommand == "BOT") {
+                return new BOT(*server);
             } else {
                 return NULL;
             }

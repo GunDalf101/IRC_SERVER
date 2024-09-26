@@ -12,7 +12,8 @@ SRCS = webserv.cpp \
 		TOPIC.cpp \
 		INVITE.cpp \
 		MODE.cpp \
-		helper.cpp
+		helper.cpp \
+		BOT.cpp
 
 OBJS = $(SRCS:.cpp=.o)
 
