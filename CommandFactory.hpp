@@ -40,7 +40,7 @@ class CommandFactory {
                 return new CommandPrivMsg(*server);
             } else if (standardCommand == "MODE") {
                 return new CommandMode(*server);
-            } else if (standardCommand == "BOT") {
+            } else if (standardCommand == "CAPOF") {
                 return new BOT(*server);
             } else {
                 return NULL;

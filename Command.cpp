@@ -36,9 +36,8 @@ bool CommandNick::isValidNickUser(const std::string &nickname)
 
 void CommandNick::execute(IRCClient *client, const std::string &params)
 {
-    if(client->authLevel != 1)
+    if(client->authLevel < 1)
         return;
-
     std::string oldNick = client->getNickname();
     std::string nick;
     std::vector<std::string> args = toReqArgs(params);
@@ -55,8 +54,10 @@ void CommandNick::execute(IRCClient *client, const std::string &params)
     else
     {
         client->setNickname(nick);
-        client->sendMessages(NICKNAME_RPLY(oldNick, client->getUsername(), client->getHostname(), nick));
-        client->authLevel = 2;
+        if(client->isAuthentificated())
+            client->sendMessages(NICKNAME_RPLY(oldNick, client->getUsername(), client->getHostname(), nick));
+        else
+            client->authLevel = 2;
     }
 }
 
@@ -80,20 +81,20 @@ void CommandUser::execute(IRCClient *client, const std::string &params)
     std::string unused;
     std::string realname;
 
+    if(client->isAuthentificated())
+        return client->sendMessages(ERR_ALREADYREGISTERED(client->getNickname(), client->getHostname()));
     if(client->authLevel != 2)
         return;
 
     std::vector<std::string> args = toReqArgs(params);
+
     if (args.size() < 4)
-    {
-        client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "USER"));
-        return;
-    }
+        return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "USER"));
+
     username = args[0];
     mode = args[1];
     unused = args[2];
     realname = args[3];
-    // client->setNickname(username);
     client->setUsername(username);
     client->setRealname(realname);
 
@@ -118,8 +119,10 @@ void CommandPass::execute(IRCClient *client, const std::string &params)
 
 void CommandPart::execute(IRCClient *client, const std::string &params)
 {
+
+    if(!client->isAuthentificated())
+        return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
     std::vector<std::string> args = toReqArgs(params);
-    std::cout << "[" << args.size() << "]" << std::endl;
     if (args.size() == 0)
         return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "PART"));
 
@@ -144,6 +147,8 @@ void CommandPart::execute(IRCClient *client, const std::string &params)
 
 void CommandKick::execute(IRCClient *client, const std::string &params)
 {
+    if(!client->isAuthentificated())
+        return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
     (void)client;
     (void)params;
 }
@@ -154,6 +159,9 @@ void CommandPrivMsg::execute(IRCClient *client, const std::string &params)
     std::string message;
     IRCChannel *rcvChannel;
     IRCClient  *rcvClient;
+
+    if(!client->isAuthentificated())
+        return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
 
     std::vector<std::string> args = toReqArgs(params);
 

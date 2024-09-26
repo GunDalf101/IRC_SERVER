@@ -89,6 +89,10 @@ static std::string buildResultModeWithArgs(std::string resultMode, std::vector<s
 
 void CommandMode::execute(IRCClient *client, const std::string &params)
 {
+
+    if(!client->isAuthentificated())
+        return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
+
     std::vector<std::string> paramArr = toReqArgs(params);
 
     if (client->isAuthentificated())

@@ -6,6 +6,10 @@ void CommandInvite::execute(IRCClient *client, const std::string &params)
     std::string channelName;
     std::stringstream paramsStream(params);
     paramsStream >> nickname >> channelName;
+
+    if(!client->isAuthentificated())
+        return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
+
     IRCChannel *channel = server->getChannel(channelName);
     if (channel == NULL)
     {

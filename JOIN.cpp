@@ -82,6 +82,9 @@ void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap
 
 void CommandJoin::execute(IRCClient *client, const std::string &params)
 {
+    if(!client->isAuthentificated())
+        return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
+
     std::vector<std::string> paramList = split(params, ' ');
     if (!paramList.empty()) {
         std::vector<std::string> channels = split(paramList[0], ',');
