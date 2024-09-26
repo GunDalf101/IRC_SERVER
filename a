@@ -1,0 +1,5 @@
+PASS 9999
+NICK a
+USER a a a a
+JOIN #c
+

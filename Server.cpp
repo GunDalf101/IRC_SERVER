@@ -164,7 +164,7 @@ std::map<int, IRCClient*> IRCServer::getCliens()
 IRCClient* IRCServer::getClientByNickname(std::string nickname) {
     std::map<int, IRCClient*>::iterator it = clients.begin();
     while (it != clients.end()) {
-        std::cout << it->second->getNickname() << std::endl;
+        // std::cout << it->second->getNickname() << std::endl;
         if (it->second->getNickname() == nickname) {
             return it->second;
         }

@@ -79,6 +79,7 @@ IRCClient *IRCChannel::getOperator(std::string nickname) {
         if ((*it)->getNickname() == nickname)
             return *it;
     }
+    std::cout << "not op" << std::endl;
     return NULL;
 }
 
@@ -188,14 +189,14 @@ bool IRCChannel::isOp(std::string nick)
 
 void IRCChannel::promoteToOp(IRCClient *client)
 {
+    operators.push_back(client);
     if (std::find(members.begin(), members.end(), client) != members.end())
         members.erase(std::find(members.begin(), members.end(), client));
-    operators.push_back(client);
 }
 
 void IRCChannel::demoteFromOp(IRCClient *client)
 {
+    members.push_back(client);
     if (std::find(operators.begin(), operators.end(), client) != operators.end())
         operators.erase(std::find(operators.begin(), operators.end(), client));
-    members.push_back(client);
 }
