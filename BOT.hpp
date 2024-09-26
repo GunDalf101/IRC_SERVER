@@ -15,8 +15,8 @@ class BOT : public ICommand
     public:
         BOT(IRCServer &server):server(server)
         {
-            nickname = "BOT";
-            username = "BOT";
+            nickname = "~CAPOF";
+            username = "~CAPOF";
         };
         void loadDatabase();
         void execute(IRCClient *client, const std::string &params);

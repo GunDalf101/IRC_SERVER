@@ -8,6 +8,9 @@ void CommandTopic::execute(IRCClient *client, const std::string &params)
     paramsStream >> channelName;
     std::getline(paramsStream, topic);
 
+    if(!client->isAuthentificated())
+        return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
+
     size_t colonPos = topic.find(':');
     if (colonPos != std::string::npos) {
         topic = topic.substr(colonPos + 1);

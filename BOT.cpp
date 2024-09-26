@@ -32,7 +32,7 @@ void BOT::execute(IRCClient *client, const std::string &params)
         return ;
     std::vector<std::string> args = toReqArgs(params);
     if(args.size() < 1)
-        return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "BOT"));
+        return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "CAPOF"));
     loadDatabase();
     std::string country = toLower(args[0]);
     std::map<std::string, std::string>::iterator i = database.find(country);
