@@ -142,14 +142,14 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                             paramArr.pop_back();
                             if (server.getClientByNickname(nick))
                             {
-                                if (ch.isMember(nick))
+                                if (ch.isMember(nick) || ch.isOp(nick))
                                 {
                                     if (mod == Set)
                                     {
                                         if (!ch.isOp(nick))
                                         {
                                             IRCClient *c = ch.getMember(nick);
-                                            ch.addOperator(c);
+                                            ch.promoteToOp(c);
                                             resultArgs.push_back(nick);
                                             addResultMode(true, resultMode, modes[i]);
                                         }
@@ -159,7 +159,7 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                                         if (ch.isOp(nick))
                                         {
                                             IRCClient *c = ch.getMember(nick);
-                                            ch.removeOperator(c);
+                                            ch.demoteFromOp(c);
                                             resultArgs.push_back(nick);
                                             addResultMode(false, resultMode, modes[i]);
                                         } 

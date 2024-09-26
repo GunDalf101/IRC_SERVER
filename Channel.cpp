@@ -185,3 +185,17 @@ bool IRCChannel::isOp(std::string nick)
 {
     return (getOperator(nick) != NULL);
 }
+
+void IRCChannel::promoteToOp(IRCClient *client)
+{
+    if (std::find(members.begin(), members.end(), client) != members.end())
+        members.erase(std::find(members.begin(), members.end(), client));
+    operators.push_back(client);
+}
+
+void IRCChannel::demoteFromOp(IRCClient *client)
+{
+    if (std::find(operators.begin(), operators.end(), client) != operators.end())
+        operators.erase(std::find(operators.begin(), operators.end(), client));
+    members.push_back(client);
+}
