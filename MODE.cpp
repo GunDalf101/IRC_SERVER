@@ -155,7 +155,7 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                                             addResultMode(true, resultMode, modes[i]);
                                         }
                                     }
-                                    else
+                                    else if (mod == Unset)
                                     {
                                         if (ch.isOp(nick))
                                         {
@@ -209,7 +209,7 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                                     }
                                 }
                             }
-                            else
+                            else if (mod == Unset)
                             {
                                 if (modes[i] == 'k' && ch.hasKey())
                                 {
@@ -238,7 +238,7 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                                     addResultMode(true, resultMode, modes[i]);
                                 }
                             }
-                            else
+                            else if (mod == Unset)
                             {
                                 if (modes[i] == 'i' && ch.isInviteOnly())
                                 {
