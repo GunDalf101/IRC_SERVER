@@ -51,6 +51,11 @@ void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap
                 it++;
                 continue;
             }
+            if (channel->isInviteOnly() && !client->isInvited(channel->getName())) {
+                client->sendMessages(ERR_INVITEONLY(client->getHostname(), client->getNickname(), it->first));
+                it++;
+                continue;
+            }
             if (channel->getClient(client->getNickname())) {
                 client->sendMessages(ERR_USERONCHANNEL(client->getHostname(), client->getNickname(), client->getNickname(), it->first));
                 it++;
