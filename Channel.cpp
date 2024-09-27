@@ -200,3 +200,11 @@ void IRCChannel::demoteFromOp(IRCClient *client)
     if (std::find(operators.begin(), operators.end(), client) != operators.end())
         operators.erase(std::find(operators.begin(), operators.end(), client));
 }
+
+void IRCChannel::notifyMembers(std::string message)
+{
+    for (std::vector<IRCClient *>::iterator it = operators.begin(); it != operators.end(); it++)
+            (*it)->sendMessages(message);
+    for (std::vector<IRCClient *>::iterator it = members.begin(); it != members.end(); it++)
+            (*it)->sendMessages(message);
+}

@@ -70,4 +70,5 @@ class IRCChannel {
         IRCClient *getMember(std::string nickname);
         void promoteToOp(IRCClient *client);
         void demoteFromOp(IRCClient *client);
+        void notifyMembers(std::string message);
 };
