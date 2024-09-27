@@ -147,10 +147,45 @@ void CommandPart::execute(IRCClient *client, const std::string &params)
 
 void CommandKick::execute(IRCClient *client, const std::string &params)
 {
+    std::string reason;
+    bool isGivenReason = false;
+    IRCChannel *channel;
+    IRCClient  *target;
+
     if(!client->isAuthentificated())
-        return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
-    (void)client;
-    (void)params;
+        return ;
+
+    std::vector<std::string> args = toReqArgs(params);
+
+    if (args.size() < 2)
+        return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getNickname(), "KICK"));
+    
+    std::vector<std::string> targets = split(args.at(1), ',');
+    if(args.size() > 2)
+        isGivenReason = true;
+
+    channel = this->server->getChannel(args[0]);
+    if(channel == NULL)
+        return client->sendMessages(ERR_NOSUCHCHANNEL(client->getHostname(), client->getNickname(), args[0]));
+    if(!channel->isClientExists(client->getNickname()))
+        return client->sendMessages(ERR_NOTONCHANNEL(client->getHostname(), args[0]));
+    if(!channel->isOp(client->getNickname()))
+        return client->sendMessages(ERR_CHANOPRIVSNEEDED(client->getHostname(), client->getNickname(), args[0]));
+    for (size_t i = 0; i < targets.size(); i++)
+    {
+        target = channel->getClient(targets[i]);
+        if(target == NULL)
+        {
+            client->sendMessages(ERR_USERNOTINCHANNEL(client->getHostname(), client->getNickname(), args[0]));
+            continue;
+        }
+        if(isGivenReason)
+            reason = "* " + client->getNickname() + " has kicked " + target->getNickname() + " from " + args[0] + " (" + args[2] + ")";
+        else
+            reason = "* " + client->getNickname() + " has kicked " + target->getNickname() + " from " + args[0];
+        channel->notifyClients(PRIVMSG_FORMAT(client->getNickname(), client->getUsername(), client->getHostname(), args[0], reason), client->getNickname());
+        channel->removeMember(target);
+    }
 }
 
 void CommandPrivMsg::execute(IRCClient *client, const std::string &params)
@@ -166,7 +201,7 @@ void CommandPrivMsg::execute(IRCClient *client, const std::string &params)
     std::vector<std::string> args = toReqArgs(params);
 
     if (args.size() < 2)
-        return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "PRIVMSG"));
+        return ;
     if (args.at(1).empty())
         return client->sendMessages(ERR_NOTEXTTOSEND(client->getNickname(), client->getHostname()));
 
@@ -195,7 +230,3 @@ void CommandPrivMsg::execute(IRCClient *client, const std::string &params)
         }
     }
 }
-
-// multiple targets
-// empty text
-// need more params

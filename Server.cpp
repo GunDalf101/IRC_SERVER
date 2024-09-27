@@ -96,11 +96,17 @@ void IRCServer::handleConnection() {
 }
 
 void IRCServer::handleClients(int i) {
+    for (auto i = clients.begin() ; i != clients.end(); i++) {
+        std::cout << "Key: " << (*i).first << ", Value: {" << (*i).second->getNickname()<< "}" << '\n';
+    }
+    std::cout << "---------------------" << std::endl;
     char buffer[1024];
     memset(buffer, 0, 1024);
     int valread = read(fds[i].fd, buffer, 1024);
     if (valread == 0) {
         close(fds[i].fd);
+        delete clients[fds[i].fd];
+        clients.erase(fds[i].fd);
         fds.erase(fds.begin() + i);
     } else {
         std::vector<std::string> commands = split(std::string(buffer), '\n');
