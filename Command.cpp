@@ -180,11 +180,15 @@ void CommandKick::execute(IRCClient *client, const std::string &params)
             continue;
         }
         if(isGivenReason)
-            reason = "* " + client->getNickname() + " has kicked " + target->getNickname() + " from " + args[0] + " (" + args[2] + ")";
+            reason = args[2];
         else
-            reason = "* " + client->getNickname() + " has kicked " + target->getNickname() + " from " + args[0];
-        channel->notifyClients(PRIVMSG_FORMAT(client->getNickname(), client->getUsername(), client->getHostname(), args[0], reason), client->getNickname());
+            reason = "";
+        client->sendMessages(RPL_KICK(client->getNickname(),client->getUsername(), client->getHostname(), target->getNickname(), args[0], reason));
+        channel->notifyClients(RPL_KICK(client->getNickname(),client->getUsername(), client->getHostname(), target->getNickname(), args[0], reason), client->getNickname());
         channel->removeMember(target);
+
+        if(target == client)
+            break;
     }
 }
 
