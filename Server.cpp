@@ -124,17 +124,18 @@ void IRCServer::parseCommands(std::string command, int clientFd) {
     ss >> cmd;
     std::string params;
     std::getline(ss, params);
+    IRCClient *client = clients[clientFd];
 
     ICommand* commandObj = CommandFactory::createCommand(cmd, this);
     if (commandObj != NULL) {
         if(!params.empty())
             params = params.substr(1, params.length()); // this for removing the space after the command
-        if (params[params.length() - 1] == '\r') {
+        if (params[params.length() - 1] == '\r')
             params = params.substr(0, params.length() - 1);
-        }
-        commandObj->execute(clients[clientFd], params);
+        commandObj->execute(client, params);
     } else {
         std::cout << "Unknown command: " << cmd << std::endl;
+        client->sendMessages(ERR_UNKNOWNCOMMAND(client->getHostname(), client->getNickname(), cmd));
     }
 }
 

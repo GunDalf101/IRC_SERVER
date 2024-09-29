@@ -29,7 +29,7 @@ void BOT::loadDatabase()
 void BOT::execute(IRCClient *client, const std::string &params)
 {
     if(!client->isAuthentificated())
-        return ;
+        return client->sendMessages(ERR_NOTREGISTERED(client->getHostname(),client->getNickname()));
     std::vector<std::string> args = toReqArgs(params);
     if(args.size() < 1)
         return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "CAPOF"));
