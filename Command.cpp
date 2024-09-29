@@ -115,34 +115,38 @@ void CommandPass::execute(IRCClient *client, const std::string &params)
         client->authLevel = 1;
 }
 
-// void CommandPart::execute(IRCClient *client, const std::string &params)
-// {
+void CommandPart::execute(IRCClient *client, const std::string &params)
+{
 
-//     if(!client->isAuthentificated())
-//         return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
-//     std::vector<std::string> args = toReqArgs(params);
-//     if (args.size() == 0)
-//         return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "PART"));
+    if(!client->isAuthentificated())
+        return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
+    std::vector<std::string> args = toReqArgs(params);
+    if (args.size() == 0)
+        return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "PART"));
 
-//     std::vector<std::string> channels = split(args.at(0), ',');
-//     for(size_t i = 0; i < channels.size(); i++)
-//     {
-//         std::string channelName = channels.at(i);
-//         IRCChannel *channel = server->getChannel(channelName);
-//         if (channel == NULL)
-//             client->sendMessages(ERR_NOSUCHCHANNEL(client->getHostname(), client->getNickname, channelName));
-//         else
-//         {
-//             if(!channel->isClientExists(client->getNickname()))
-//                 client->sendMessages(ERR_NOTONCHANNEL(client->getHostname(), channelName));
-//             else
-//             {
-//                 channel->removeMember(client);
-//                 client->sendMessages(PART);
-//             }
-//         }
-//     }
-// }
+    std::string reason;
+    if (args.size() > 1)
+        reason = args.at(1);
+    std::vector<std::string> channels = split(args.at(0), ',');
+    for(size_t i = 0; i < channels.size(); i++)
+    {
+        std::string channelName = channels.at(i);
+        IRCChannel *channel = server->getChannel(channelName);
+        if (channel == NULL)
+            client->sendMessages(ERR_NOSUCHCHANNEL(client->getHostname(), client->getNickname(), channelName));
+        else
+        {
+            if(!channel->isClientExists(client->getNickname()))
+                client->sendMessages(ERR_NOTONCHANNEL(client->getHostname(), channelName));
+            else
+            {
+                channel->notifyClients(RPL_NOTIFYPART(client->getNickname(), client->getHostname(), channelName, reason), client->getNickname());
+                client->sendMessages(RPL_NOTIFYPART(client->getNickname(), client->getHostname(), channelName, reason));
+                channel->removeMember(client);
+            }
+        }
+    }
+}
 
 void CommandKick::execute(IRCClient *client, const std::string &params)
 {
@@ -153,7 +157,7 @@ void CommandKick::execute(IRCClient *client, const std::string &params)
     IRCClient  *target;
 
     if(!client->isAuthentificated())
-        return ;
+        return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
 
     std::vector<std::string> args = toReqArgs(params);
 
@@ -180,8 +184,12 @@ void CommandKick::execute(IRCClient *client, const std::string &params)
             client->sendMessages(ERR_USERNOTINCHANNEL(client->getHostname(), client->getNickname(), channelName));
             continue;
         }
-        channel->notifyClients(RPL_KICK(client->getNickname(), client->getUsername(), client->getHostname(), client->getNickname() ,channelName, reason), client->getNickname());
+        channel->notifyClients(RPL_KICK(client->getNickname(), client->getUsername(), client->getHostname(), target->getNickname() ,channelName, reason), client->getNickname());
+        client->sendMessages(RPL_KICK(client->getNickname(),client->getUsername(), client->getHostname(), target->getNickname(), channelName, reason));
         channel->removeMember(target);
+
+        if(target == client)
+            break;
     }
 }
 

@@ -96,10 +96,10 @@ void IRCServer::handleConnection() {
 }
 
 void IRCServer::handleClients(int i) {
-    for (auto i = clients.begin() ; i != clients.end(); i++) {
-        std::cout << "Key: " << (*i).first << ", Value: {" << (*i).second->getNickname()<< "}" << '\n';
-    }
-    std::cout << "---------------------" << std::endl;
+    // for (auto i = clients.begin() ; i != clients.end(); i++) {
+    //     std::cout << "Key: " << (*i).first << ", Value: {" << (*i).second->getNickname()<< "}" << '\n';
+    // }
+    // std::cout << "---------------------" << std::endl;
     char buffer[1024];
     memset(buffer, 0, 1024);
     int valread = read(fds[i].fd, buffer, 1024);
