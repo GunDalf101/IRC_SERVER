@@ -42,10 +42,8 @@ void CommandNick::execute(IRCClient *client, const std::string &params)
     std::string nick;
     std::vector<std::string> args = toReqArgs(params);
     if (args.empty())
-    {
-        client->sendMessages(ERR_NONICKNAMEGIVEN(nick, client->getHostname()));
-        return;
-    }
+        return client->sendMessages(ERR_NONICKNAMEGIVEN(nick, client->getHostname()));
+
     nick = args.at(0);
     if (!isValidNickUser(nick))
         client->sendMessages(ERR_ERRONEUSNICKNAME(nick, client->getHostname()));
@@ -117,38 +115,40 @@ void CommandPass::execute(IRCClient *client, const std::string &params)
         client->authLevel = 1;
 }
 
-void CommandPart::execute(IRCClient *client, const std::string &params)
-{
+// void CommandPart::execute(IRCClient *client, const std::string &params)
+// {
 
-    if(!client->isAuthentificated())
-        return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
-    std::vector<std::string> args = toReqArgs(params);
-    if (args.size() == 0)
-        return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "PART"));
+//     if(!client->isAuthentificated())
+//         return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
+//     std::vector<std::string> args = toReqArgs(params);
+//     if (args.size() == 0)
+//         return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "PART"));
 
-    std::vector<std::string> channels = split(args.at(0), ',');
-    for(size_t i = 0; i < channels.size(); i++)
-    {
-        std::string channelName = channels.at(i);
-        IRCChannel *channel = server->getChannel(channelName);
-        if (channel == NULL)
-            client->sendMessages(":" + client->getNickname() + " 403 " + client->getNickname() + " " + channelName + " :No such channel");
-        else
-        {
-            if(channel->isClientExists(client->getNickname()))
-            {
-                channel->removeMember(client);
-                client->sendMessages(":" + client->getNickname() + "!~" + client->getUsername() + "@" + client->getHostname() + " PART " + channelName);
-            } else
-                client->sendMessages(ERR_NOTONCHANNEL(client->getHostname(), channelName));
-        }
-    }
-}
+//     std::vector<std::string> channels = split(args.at(0), ',');
+//     for(size_t i = 0; i < channels.size(); i++)
+//     {
+//         std::string channelName = channels.at(i);
+//         IRCChannel *channel = server->getChannel(channelName);
+//         if (channel == NULL)
+//             client->sendMessages(ERR_NOSUCHCHANNEL(client->getHostname(), client->getNickname, channelName));
+//         else
+//         {
+//             if(!channel->isClientExists(client->getNickname()))
+//                 client->sendMessages(ERR_NOTONCHANNEL(client->getHostname(), channelName));
+//             else
+//             {
+//                 channel->removeMember(client);
+//                 client->sendMessages(PART);
+//             }
+//         }
+//     }
+// }
 
 void CommandKick::execute(IRCClient *client, const std::string &params)
 {
     std::string reason;
     bool isGivenReason = false;
+    std::string channelName;
     IRCChannel *channel;
     IRCClient  *target;
 
@@ -162,28 +162,25 @@ void CommandKick::execute(IRCClient *client, const std::string &params)
     
     std::vector<std::string> targets = split(args.at(1), ',');
     if(args.size() > 2)
-        isGivenReason = true;
+        reason = args[2];
 
-    channel = this->server->getChannel(args[0]);
+    channelName = args[0];
+    channel = this->server->getChannel(channelName);
     if(channel == NULL)
-        return client->sendMessages(ERR_NOSUCHCHANNEL(client->getHostname(), client->getNickname(), args[0]));
+        return client->sendMessages(ERR_NOSUCHCHANNEL(client->getHostname(), client->getNickname(), channelName));
     if(!channel->isClientExists(client->getNickname()))
-        return client->sendMessages(ERR_NOTONCHANNEL(client->getHostname(), args[0]));
+        return client->sendMessages(ERR_NOTONCHANNEL(client->getHostname(), channelName));
     if(!channel->isOp(client->getNickname()))
-        return client->sendMessages(ERR_CHANOPRIVSNEEDED(client->getHostname(), client->getNickname(), args[0]));
+        return client->sendMessages(ERR_CHANOPRIVSNEEDED(client->getHostname(), client->getNickname(), channelName));
     for (size_t i = 0; i < targets.size(); i++)
     {
         target = channel->getClient(targets[i]);
         if(target == NULL)
         {
-            client->sendMessages(ERR_USERNOTINCHANNEL(client->getHostname(), client->getNickname(), args[0]));
+            client->sendMessages(ERR_USERNOTINCHANNEL(client->getHostname(), client->getNickname(), channelName));
             continue;
         }
-        if(isGivenReason)
-            reason = "* " + client->getNickname() + " has kicked " + target->getNickname() + " from " + args[0] + " (" + args[2] + ")";
-        else
-            reason = "* " + client->getNickname() + " has kicked " + target->getNickname() + " from " + args[0];
-        channel->notifyClients(PRIVMSG_FORMAT(client->getNickname(), client->getUsername(), client->getHostname(), args[0], reason), client->getNickname());
+        channel->notifyClients(RPL_KICK(client->getNickname(), client->getUsername(), client->getHostname(), client->getNickname() ,channelName, reason), client->getNickname());
         channel->removeMember(target);
     }
 }
@@ -200,9 +197,9 @@ void CommandPrivMsg::execute(IRCClient *client, const std::string &params)
 
     std::vector<std::string> args = toReqArgs(params);
 
-    if (args.size() < 2)
-        return ;
-    if (args.at(1).empty())
+    if (args.size() == 0)
+        return client->sendMessages(ERR_NORECIPIENT(client->getHostname(), client->getNickname(), "PRIVMSG"));
+    if (args.size() == 1 || args.at(1).empty())
         return client->sendMessages(ERR_NOTEXTTOSEND(client->getNickname(), client->getHostname()));
 
     std::vector<std::string> targets = split(args.at(0), ',');
@@ -213,7 +210,6 @@ void CommandPrivMsg::execute(IRCClient *client, const std::string &params)
         target = targets.at(i);
         if(target.at(0) == '#')
         {
-            std::cout << '[' << target << ']' << std::endl;
             rcvChannel = this->server.getChannel(target);
             if(rcvChannel == NULL)
                 client->sendMessages(ERR_NOSUCHCHANNEL(client->getHostname(), client->getNickname(), target));
