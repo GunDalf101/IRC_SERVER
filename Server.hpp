@@ -24,6 +24,7 @@ class IRCServer {
         void sendResponse(int client_fd, std::string response);
     public:
         IRCServer(int port, std::string password);
+        std::map<std::string, IRCChannel*> getChannels();
         void replaceClient(int client_fd, IRCClient* newClient);
         void createChannel(std::string channelName);
         IRCChannel* getChannel(std::string channelName);

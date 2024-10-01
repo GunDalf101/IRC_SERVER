@@ -34,6 +34,7 @@ static bool isValidKey(std::string key)
     {
         if (key[i] == ' ')
             return (false);
+        i++;
     }
     return (true);
 }
@@ -184,15 +185,13 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                                 paramArr.pop_back();
                                 if (modes[i] == 'k')
                                 {
-                                    if (ch.hasKey() && isValidKey(arg))
+                                    if (!arg.size() || !isValidKey(arg))
+                                        client->sendMessages(ERR_INVALIDKEY(server.getHostName(), client->getNickname(), ch.getName()));
+                                    else if (!ch.hasKey())
                                     {
                                         ch.setKey(arg);
                                         resultArgs.push_back(arg);
                                         addResultMode(true, resultMode, modes[i]);
-                                    }
-                                    else
-                                    {
-                                        client->sendMessages(ERR_INVALIDKEY(client->getNickname(), ch.getName()));
                                     }
                                 }
                                 else

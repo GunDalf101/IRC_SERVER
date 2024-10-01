@@ -189,3 +189,8 @@ std::string IRCServer::getHostName(void) const
 {
     return (hostname);
 }
+
+std::map<std::string, IRCChannel*> IRCServer::getChannels(void)
+{
+    return (channels);
+}
