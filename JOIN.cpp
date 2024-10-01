@@ -85,6 +85,21 @@ void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap
     std::cout << std::endl;
 }
 
+static std::string getChannelsOfMember(std::map<std::string, IRCChannel*> channels, IRCClient* client)
+{
+    IRCChannel *c;
+    std::string result = "";
+    for (std::map<std::string, IRCChannel*>::iterator i = channels.begin(); i != channels.end(); i++)
+    {
+        c = i->second;
+        if (c->isClientExists(client->getNickname()))
+        {
+            result.append(c->getName() + ",");
+        }
+    }
+    return (result);
+}
+
 void CommandJoin::execute(IRCClient *client, const std::string &params)
 {
     if(!client->isAuthentificated())
@@ -92,6 +107,16 @@ void CommandJoin::execute(IRCClient *client, const std::string &params)
 
     std::vector<std::string> paramList = split(params, ' ');
     if (!paramList.empty()) {
+        if (paramList.size() == 1 && paramList[0] == "0")
+        {
+            std::string channels = getChannelsOfMember(server->getChannels(), client);
+            if (channels.empty())
+                return;
+            else
+                channels.append(" :Left all channels");
+            CommandPart(server).execute(client, channels);
+            return;
+        }
         std::vector<std::string> channels = split(paramList[0], ',');
         std::vector<std::string> keys;
         if (paramList.size() > 1)
