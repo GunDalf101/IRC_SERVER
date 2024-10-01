@@ -133,6 +133,7 @@ void IRCServer::parseCommands(std::string command, int clientFd) {
         if (params[params.length() - 1] == '\r')
             params = params.substr(0, params.length() - 1);
         commandObj->execute(client, params);
+        delete commandObj;
     } else {
         std::cout << "Unknown command: " << cmd << std::endl;
         client->sendMessages(ERR_UNKNOWNCOMMAND(client->getHostname(), client->getNickname(), cmd));
