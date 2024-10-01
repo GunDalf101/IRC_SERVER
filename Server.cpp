@@ -95,6 +95,18 @@ void IRCServer::handleConnection() {
     std::cout << "New connection from " << ipCli << std::endl;
 }
 
+static void byeBye(IRCServer *server, IRCClient *client)
+{
+    std::map<std::string, IRCChannel*> channels = server->getChannels();
+    IRCChannel *c;
+    for (std::map<std::string, IRCChannel*>::iterator i = channels.begin(); i != channels.end(); i++)
+    {
+        c = i->second;
+        if (c->isClientExists(client->getNickname()))
+            c->removeMember(client);
+    }
+}
+
 void IRCServer::handleClients(int i) {
     // for (auto i = clients.begin() ; i != clients.end(); i++) {
     //     std::cout << "Key: " << (*i).first << ", Value: {" << (*i).second->getNickname()<< "}" << '\n';
@@ -105,6 +117,7 @@ void IRCServer::handleClients(int i) {
     int valread = read(fds[i].fd, buffer, 1024);
     if (valread == 0) {
         close(fds[i].fd);
+        byeBye(this, clients[fds[i].fd]);
         delete clients[fds[i].fd];
         clients.erase(fds[i].fd);
         fds.erase(fds.begin() + i);

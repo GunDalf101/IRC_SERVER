@@ -71,8 +71,6 @@ void IRCChannel::removeMember(IRCClient *client)
     i = std::find(operators.begin(), operators.end(), client);
     if(i != operators.end())
         operators.erase(i);
-    
-
 }
 
 IRCClient *IRCChannel::getClient(std::string nickname) {
