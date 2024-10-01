@@ -27,6 +27,7 @@ class IRCServer {
         std::map<std::string, IRCChannel*> getChannels();
         void replaceClient(int client_fd, IRCClient* newClient);
         void createChannel(std::string channelName);
+        void removeChannel(std::string channelName);
         IRCChannel* getChannel(std::string channelName);
         IRCClient* getClientByNickname(std::string nickname);
         std::map<int, IRCClient*> getCliens();
@@ -34,5 +35,6 @@ class IRCServer {
         ~IRCServer();
         void run();
         void setHostName(std::string _hostname);
+        void welcome_client(IRCClient *client);
         std::string getHostName(void) const;
 };

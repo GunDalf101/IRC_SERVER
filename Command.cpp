@@ -36,7 +36,7 @@ bool CommandNick::isValidNickUser(const std::string &nickname)
 
 void CommandNick::execute(IRCClient *client, const std::string &params)
 {
-    if(client->authLevel < 1)
+    if((client->authLevel & 1) == 0)
         return;
     std::string oldNick = client->getNickname();
     std::string nick;
@@ -55,7 +55,10 @@ void CommandNick::execute(IRCClient *client, const std::string &params)
         if(client->isAuthentificated())
             client->sendMessages(NICKNAME_RPLY(oldNick, client->getUsername(), client->getHostname(), nick));
         else
-            client->authLevel = 2;
+        {
+            client->authLevel |= 2;
+            server.welcome_client(client);
+        }
     }
 }
 
@@ -79,10 +82,10 @@ void CommandUser::execute(IRCClient *client, const std::string &params)
     std::string unused;
     std::string realname;
 
+    if((client->authLevel & 1) == 0)
+        return;
     if(client->isAuthentificated())
         return client->sendMessages(ERR_ALREADYREGISTERED(client->getNickname(), client->getHostname()));
-    if(client->authLevel != 2)
-        return;
 
     std::vector<std::string> args = toReqArgs(params);
 
@@ -96,23 +99,22 @@ void CommandUser::execute(IRCClient *client, const std::string &params)
     client->setUsername(username);
     client->setRealname(realname);
 
-    client->authLevel = 3;
-    client->sendMessages(RPL_WELCOME(client->getNickname(), client->getHostname()));
-    client->sendMessages(RPL_YOURHOST(client->getNickname(), client->getHostname()));
-    client->sendMessages(RPL_CREATED(client->getNickname(), client->getHostname()));
-    client->sendMessages(RPL_MYINFO(client->getNickname(), client->getHostname()));
+    client->authLevel |= 4;
+    server.welcome_client(client);
 }
 
 void CommandPass::execute(IRCClient *client, const std::string &params)
 {
     if(client->isAuthentificated())
         client->sendMessages(ERR_ALREADYREGISTERED(client->getNickname(), client->getHostname()));
+    else if(client->authLevel&1)
+        return;
     else if(params.empty())
         client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "PASS"));
     else if(params.compare(server.getPassword()))
         client->sendMessages(ERR_PASSWDMISMATCH(client->getNickname(), client->getHostname()));
     else
-        client->authLevel = 1;
+        client->authLevel |= 1;
 }
 
 void CommandPart::execute(IRCClient *client, const std::string &params)
@@ -187,6 +189,8 @@ void CommandKick::execute(IRCClient *client, const std::string &params)
         channel->notifyClients(RPL_KICK(client->getNickname(), client->getUsername(), client->getHostname(), target->getNickname() ,channelName, reason), client->getNickname());
         client->sendMessages(RPL_KICK(client->getNickname(),client->getUsername(), client->getHostname(), target->getNickname(), channelName, reason));
         channel->removeMember(target);
+        if(channel->getNumUsers() == 0)
+            server->removeChannel(channelName);
 
         if(target == client)
             break;

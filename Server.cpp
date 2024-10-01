@@ -194,3 +194,23 @@ std::map<std::string, IRCChannel*> IRCServer::getChannels(void)
 {
     return (channels);
 }
+
+void IRCServer::welcome_client(IRCClient *client)
+{
+    if(client->isAuthentificated())
+    {
+        client->sendMessages(RPL_WELCOME(client->getNickname(), client->getHostname()));
+        client->sendMessages(RPL_YOURHOST(client->getNickname(), client->getHostname()));
+        client->sendMessages(RPL_CREATED(client->getNickname(), client->getHostname()));
+        client->sendMessages(RPL_MYINFO(client->getNickname(), client->getHostname()));
+    }
+};
+
+void IRCServer::removeChannel(std::string channelName)
+{
+    std::map<std::string, IRCChannel*>::iterator i = channels.find(channelName);
+    if(i == channels.end())
+        return;
+    delete (*i).second;
+    channels.erase(i);
+}

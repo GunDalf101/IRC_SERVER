@@ -23,7 +23,7 @@ class CommandFactory {
             if (standardCommand == "NICK") {
                 return new CommandNick(*server);
             } else if (standardCommand == "USER") {
-                return new CommandUser();
+                return new CommandUser(*server);
             } else if (standardCommand == "PASS") {
                 return new CommandPass(*server);
             } else if (standardCommand == "JOIN") {

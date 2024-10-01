@@ -25,7 +25,7 @@ class IRCClient {
         void setNickname(std::string nickname) { this->nickname = nickname; }
         void setUsername(std::string username) { this->username = username; }
         void setPassword(std::string password) { this->password = password; }
-        bool isAuthentificated() { return this->authLevel == 3; }
+        bool isAuthentificated() {return this->authLevel == 7;}
         std::string getHostname() { return hostname; }
         void setHostname(std::string hostname) { this->hostname = hostname; }
         std::string getRealname() { return realname; }

@@ -39,7 +39,9 @@ class CommandPrivMsg : public ICommand {
 };
 
 class CommandUser : public ICommand {
+    IRCServer &server;
     public:
+        CommandUser(IRCServer &server):server(server){};
         void execute(IRCClient *client, const std::string &params);
         bool canExecute(IRCClient *client){
             (void)client;
