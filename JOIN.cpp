@@ -41,6 +41,11 @@ void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap
         if (server->getChannel(it->first)) {
             IRCChannel *channel = server->getChannel(it->first);
             std::cout << "Channel mode: " << channel->getModes(true) << std::endl;
+            if (channel->getClient(client->getNickname())) {
+                client->sendMessages(ERR_USERONCHANNEL(client->getHostname(), client->getNickname(), client->getNickname(), it->first));
+                it++;
+                continue;
+            }
             if (channel->hasUserLimit() && channel->getNumUsers() >= channel->getLimit()) {
                 client->sendMessages(ERR_CHANNELISFULL(client->getHostname(), client->getNickname(), it->first));
                 it++;
@@ -53,11 +58,6 @@ void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap
             }
             if (channel->isInviteOnly() && !client->isInvited(channel->getName())) {
                 client->sendMessages(ERR_INVITEONLY(client->getHostname(), client->getNickname(), it->first));
-                it++;
-                continue;
-            }
-            if (channel->getClient(client->getNickname())) {
-                client->sendMessages(ERR_USERONCHANNEL(client->getHostname(), client->getNickname(), client->getNickname(), it->first));
                 it++;
                 continue;
             }

@@ -30,6 +30,8 @@ static bool isValidKey(std::string key)
 {
     uint i = 0;
 
+    if (key[0] == ':')
+        return (false);
     while (i < key.size())
     {
         if (key[i] == ' ')
