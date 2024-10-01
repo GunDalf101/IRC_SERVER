@@ -153,7 +153,7 @@ void CommandPart::execute(IRCClient *client, const std::string &params)
 void CommandKick::execute(IRCClient *client, const std::string &params)
 {
     std::string reason;
-    bool isGivenReason = false;
+    // bool isGivenReason = false;
     std::string channelName;
     IRCChannel *channel;
     IRCClient  *target;
