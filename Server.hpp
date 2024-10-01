@@ -15,6 +15,7 @@ class IRCServer {
         std::vector<struct pollfd> fds;
         std::map<int, IRCClient*> clients;
         std::map<std::string, IRCChannel*> channels;
+        std::map<int, std::string> buffers;
         std::string hostname;
 
         int setupMainSocket(int port);

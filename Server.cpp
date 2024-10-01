@@ -108,25 +108,29 @@ static void byeBye(IRCServer *server, IRCClient *client)
 }
 
 void IRCServer::handleClients(int i) {
-    // for (auto i = clients.begin() ; i != clients.end(); i++) {
-    //     std::cout << "Key: " << (*i).first << ", Value: {" << (*i).second->getNickname()<< "}" << '\n';
-    // }
-    // std::cout << "---------------------" << std::endl;
     char buffer[1024];
     memset(buffer, 0, 1024);
-    int valread = read(fds[i].fd, buffer, 1024);
+    ssize_t valread = read(fds[i].fd, buffer, 1024 - 1);
     if (valread == 0) {
         close(fds[i].fd);
         byeBye(this, clients[fds[i].fd]);
         delete clients[fds[i].fd];
         clients.erase(fds[i].fd);
         fds.erase(fds.begin() + i);
+    }
+    else if (valread < 0)
+    {
     } else {
-        std::vector<std::string> commands = split(std::string(buffer), '\n');
-        for(size_t j = 0; j < commands.size(); j++)
+        buffers[i].append(buffer);
+        if (buffers[i].find('\n') != std::string::npos)
         {
-            std::cout << "Received: " << commands[j] << std::endl;
-            parseCommands(commands[j], fds[i].fd);
+            std::vector<std::string> commands = split(buffers[i], '\n');
+            for(size_t j = 0; j < commands.size(); j++)
+            {
+                std::cout << "Received: " << commands[j] << std::endl;
+                parseCommands(commands[j], fds[i].fd);
+            }
+            buffers[i].clear();
         }
     }
 }
