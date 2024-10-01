@@ -61,6 +61,8 @@ void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap
                 it++;
                 continue;
             }
+            if (client->isInvited(channel->getName())) 
+                client->removeInvite(channel->getName());
             channel->addMember(client);
         }
 
@@ -134,5 +136,8 @@ void CommandJoin::execute(IRCClient *client, const std::string &params)
             return;
         }
         handleChannel(channelKeyMap, client);
+    } else {
+        client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "JOIN"));
     }
+
 }

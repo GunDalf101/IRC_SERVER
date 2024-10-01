@@ -254,7 +254,7 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
                     }
                     else
                     {
-                        // client->sendMessages(ERR_UNKNOWNMODE(server.getHostName(), client->getNickname(), modes[i]));
+                        client->sendMessages(ERR_UNKNOWNMODE(server.getHostName(), client->getNickname(), modes[i]));
                     }
                     i++;
                 }
