@@ -33,7 +33,7 @@ void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap
     std::map<std::string, std::string>::iterator it;
     it = channelKeyMap.begin();
     while (it != channelKeyMap.end()) {
-        if (it->first[0] != '#' || it->first.length() > 50){
+        if (it->first[0] != '#' || (it->first[0] != ':' && it->first[0] != '#') ||it->first.length() > 50){
             client->sendMessages(ERR_BADCHANNELNAME(client->getNickname(), client->getHostname(), it->first));
             it++;
             continue;
