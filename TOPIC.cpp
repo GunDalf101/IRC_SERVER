@@ -9,7 +9,7 @@ void CommandTopic::execute(IRCClient *client, const std::string &params)
     std::getline(paramsStream, topic);
 
     if(!client->isAuthentificated())
-        return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
+        return client->sendMessages(ERR_NOTREGISTERED(client->getHostname(), client->getNickname()));
 
     size_t colonPos = topic.find(':');
     if (colonPos != std::string::npos) {
@@ -32,7 +32,7 @@ void CommandTopic::execute(IRCClient *client, const std::string &params)
         return;
     }
     if (!channel->getOperator(client->getNickname()) && channel->getModes(true).find("t") != std::string::npos) {
-        client->sendMessages(ERR_CHANOPRIVSNEEDED(client->getNickname(), client->getHostname(), channelName));
+        client->sendMessages(ERR_CHANOPRIVSNEEDED(client->getHostname(), client->getNickname(), channelName));
         return;
     }
     channel->setTopic(topic);

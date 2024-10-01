@@ -42,11 +42,11 @@ void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap
             IRCChannel *channel = server->getChannel(it->first);
             std::cout << "Channel mode: " << channel->getModes(true) << std::endl;
             if (channel->hasUserLimit() && channel->getNumUsers() >= channel->getLimit()) {
-                client->sendMessages(ERR_CHANNELISFULL(client->getNickname(), client->getHostname(), it->first));
+                client->sendMessages(ERR_CHANNELISFULL(client->getHostname(), client->getNickname(), it->first));
                 it++;
                 continue;
             }
-            if (channel->getKey() != it->second  && channel->getModes(true).find("k") != std::string::npos){
+            if (channel->getKey() != it->second  && channel->getModes(true).find("k") != std::string::npos &&  && !client->isInvited(channel->getName())){
                 client->sendMessages(ERR_BADCHANNELKEY(client->getNickname(), client->getHostname(), it->first));
                 it++;
                 continue;
@@ -103,7 +103,7 @@ static std::string getChannelsOfMember(std::map<std::string, IRCChannel*> channe
 void CommandJoin::execute(IRCClient *client, const std::string &params)
 {
     if(!client->isAuthentificated())
-        return client->sendMessages(ERR_NOTREGISTERED(client->getNickname(), client->getHostname()));
+        return client->sendMessages(ERR_NOTREGISTERED(client->getHostname(), client->getNickname()));
 
     std::vector<std::string> paramList = split(params, ' ');
     if (!paramList.empty()) {
