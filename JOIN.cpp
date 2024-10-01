@@ -46,7 +46,7 @@ void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap
                 it++;
                 continue;
             }
-            if (channel->getKey() != it->second  && channel->getModes(true).find("k") != std::string::npos &&  && !client->isInvited(channel->getName())){
+            if (channel->getKey() != it->second  && channel->getModes(true).find("k") != std::string::npos && !client->isInvited(channel->getName())){
                 client->sendMessages(ERR_BADCHANNELKEY(client->getNickname(), client->getHostname(), it->first));
                 it++;
                 continue;
