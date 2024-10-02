@@ -2,6 +2,7 @@
 #include "Channel.hpp"
 #include "CommandFactory.hpp"
 #include <sys/_pthread/_pthread_once_t.h>
+#include <netinet/tcp.h>
 
 IRCServer::IRCServer(int port, std::string password) {
     this->password = password;
@@ -57,6 +58,11 @@ int IRCServer::setupMainSocket(int port) {
         std::cerr << "setsockopt() failed: " << strerror(errno) << std::endl;
         exit(1);
     }
+    if (setsockopt(server_fd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt)) == -1)
+    {
+        std::cerr << "setsockopt() failed: " << strerror(errno) << std::endl;
+        exit(1);     
+    }
     fcntl(server_fd, F_SETFL, O_NONBLOCK);
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
@@ -67,7 +73,7 @@ int IRCServer::setupMainSocket(int port) {
         exit(1);
     }
 
-    if (listen(server_fd, 10) == -1) {
+    if (listen(server_fd, 128) == -1) {
         std::cerr << "listen() failed: " << strerror(errno) << std::endl;
         exit(1);
     }
