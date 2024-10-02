@@ -29,6 +29,7 @@ class IRCServer {
         void replaceClient(int client_fd, IRCClient* newClient);
         void createChannel(std::string channelName);
         void removeChannel(std::string channelName);
+        void broadcastToChannels(std::string &sender, std::string &message);
         IRCChannel* getChannel(std::string channelName);
         IRCClient* getClientByNickname(std::string nickname);
         std::map<int, IRCClient*> getCliens();

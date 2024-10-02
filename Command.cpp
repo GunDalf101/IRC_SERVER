@@ -53,7 +53,7 @@ void CommandNick::execute(IRCClient *client, const std::string &params)
     {
         client->setNickname(nick);
         if(client->isAuthentificated())
-            client->sendMessages(NICKNAME_RPLY(oldNick, client->getUsername(), client->getHostname(), nick));
+            server.broadcastToChannels(client->getNickname(), NICKNAME_RPLY(oldNick, client->getUsername(), client->getHostname(), nick));
         else
         {
             client->authLevel |= 2;
