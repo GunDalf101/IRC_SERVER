@@ -145,6 +145,8 @@ void CommandPart::execute(IRCClient *client, const std::string &params)
                 channel->notifyClients(RPL_NOTIFYPART(client->getNickname(), client->getHostname(), channelName, reason), client->getNickname());
                 client->sendMessages(RPL_NOTIFYPART(client->getNickname(), client->getHostname(), channelName, reason));
                 channel->removeMember(client);
+                if(channel->getNumUsers() == 0)
+                    server->removeChannel(channelName);
             }
         }
     }

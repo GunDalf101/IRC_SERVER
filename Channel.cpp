@@ -66,11 +66,13 @@ void IRCChannel::removeMember(IRCClient *client)
         return;
     users.erase(i);
     i = std::find(members.begin(), members.end(), client);
-    if(i != members.end())
+    if(i != members.end()){
         members.erase(i);
+    }
     i = std::find(operators.begin(), operators.end(), client);
-    if(i != operators.end())
+    if(i != operators.end()) {
         operators.erase(i);
+    }
 }
 
 IRCClient *IRCChannel::getClient(std::string nickname) {

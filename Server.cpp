@@ -1,4 +1,5 @@
 #include "Server.hpp"
+#include "Channel.hpp"
 #include "CommandFactory.hpp"
 #include <sys/_pthread/_pthread_once_t.h>
 

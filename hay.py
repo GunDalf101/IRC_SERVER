@@ -13,8 +13,6 @@ server_port = 8080
 initial_lines = [
     'pass h\r\n',
     'nick testtest\r\n',
-    'nick testtestt\r\n',
-    'nick testtesttt\r\n',
     'user r r r r\r\n',
     'join #c\r\n'
 ]
@@ -61,7 +59,7 @@ def main():
             print(f'Connected to {server_address}:{server_port}')
             reader = sock.makefile("r")
             # Send initial lines
-            for line in initial_lines:
+            for line, i in initial_lines:
                 sock.sendall(line.encode('utf-8'))
                 print(f'Sent: {line.strip()}')
             # Join multiple channels dynamically
