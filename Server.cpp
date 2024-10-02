@@ -106,7 +106,7 @@ static void byeBye(IRCServer *server, IRCClient *client)
     {
         c = i->second;
         if (c->isClientExists(client->getNickname()))
-            c->removeMember(client);
+            CommandPart(server).execute(client, c->getName());
     }
 }
 
@@ -115,12 +115,12 @@ void IRCServer::handleClients(int i) {
     memset(buffer, 0, 1024);
     ssize_t valread = read(fds[i].fd, buffer, 1024 - 1);
     if (valread == 0) {
-        close(fds[i].fd);
         byeBye(this, clients[fds[i].fd]);
         delete clients[fds[i].fd];
         clients.erase(fds[i].fd);
-        fds.erase(fds.begin() + i);
         buffers.erase(fds[i].fd);
+        close(fds[i].fd);
+        fds.erase(fds.begin() + i);
     }
     else if (valread < 0)
     {
@@ -238,7 +238,7 @@ void IRCServer::removeChannel(std::string channelName)
     channels.erase(i);
 }
 
-void IRCServer::broadcastToChannels(const std::string sender, const std::string message)
+void IRCServer::broadcastToChannels(std::string sender, std::string message)
 {
     IRCChannel *channel;
     std::map<std::string, IRCChannel*>::iterator i;
