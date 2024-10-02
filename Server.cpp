@@ -163,6 +163,7 @@ void IRCServer::parseCommands(std::string command, int clientFd) {
 
 void IRCServer::sendResponse(int client_fd, std::string response) {
     std::string message = response + "\r\n";
+    std::cout << "send : " << message << "\r\n";
     send(client_fd, message.c_str(), message.length(), 0);
 }
 
@@ -237,9 +238,14 @@ void IRCServer::removeChannel(std::string channelName)
     channels.erase(i);
 }
 
-void IRCServer::broadcastToChannels(std::string &sender, std::string &message)
+void IRCServer::broadcastToChannels(const std::string sender, const std::string message)
 {
+    IRCChannel *channel;
     std::map<std::string, IRCChannel*>::iterator i;
     for (i = channels.begin(); i != channels.end(); i++)
-        (*i).second->notifyClients(message, sender);
+    {
+        channel = (*i).second;
+        if(channel->isClientExists(sender))
+            channel->notifyClients(message, sender);
+    }
 }

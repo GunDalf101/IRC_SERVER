@@ -11,7 +11,7 @@ std::string getColonArg(std::string arg)
 
 bool isValidChar(char c)
 {
-    std::string special = "-_\\[]{}^|";
+    std::string special = "\\[]{}|";
     if(isalnum(c))
         return true;
     for(unsigned int i = 0; i < special.length(); i++)
@@ -26,7 +26,7 @@ bool CommandNick::isValidNickUser(const std::string &nickname)
         return false;
     if(nickname.length() > 30)
         return false;
-    if(!isalpha(nickname.at(0)))
+    if(isdigit(nickname.at(0)))
         return false;
     for(unsigned int i = 0; i < nickname.length(); i++)
         if(!isValidChar(nickname.at(i)))
@@ -53,7 +53,10 @@ void CommandNick::execute(IRCClient *client, const std::string &params)
     {
         client->setNickname(nick);
         if(client->isAuthentificated())
+        {
+            client->sendMessages(NICKNAME_RPLY(oldNick, client->getUsername(), client->getHostname(), nick));
             server.broadcastToChannels(client->getNickname(), NICKNAME_RPLY(oldNick, client->getUsername(), client->getHostname(), nick));
+        }
         else
         {
             client->authLevel |= 2;
@@ -89,7 +92,7 @@ void CommandUser::execute(IRCClient *client, const std::string &params)
 
     std::vector<std::string> args = toReqArgs(params);
 
-    if (args.size() < 4)
+    if (args.size() < 4 || args[3].empty())
         return client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "USER"));
 
     username = args[0];
@@ -233,7 +236,7 @@ void CommandPrivMsg::execute(IRCClient *client, const std::string &params)
                 rcvChannel->notifyClients(PRIVMSG_FORMAT(client->getNickname(), client->getUsername(), client->getHostname(), target, message), client->getNickname());
         } else {
             rcvClient = server.getClientByNickname(target);
-            if(rcvClient == NULL)
+            if(rcvClient == NULL || !rcvClient->isAuthentificated())
                 client->sendMessages(ERR_NOSUCHNICK(client->getHostname(), client->getNickname(), target));
             else
                 rcvClient->sendMessages(PRIVMSG_FORMAT(client->getNickname(), client->getUsername(), client->getHostname(), rcvClient->getNickname(), message));
