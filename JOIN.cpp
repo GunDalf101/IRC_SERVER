@@ -2,16 +2,15 @@
 #include "CommandRpl.hpp"
 #include <iostream>
 
-
-// static std::vector<std::string> split(const std::string& s, char delimiter) {
-//     std::vector<std::string> tokens;
-//     std::string token;
-//     std::istringstream tokenStream(s);
-//     while (std::getline(tokenStream, token, delimiter)) {
-//         tokens.push_back(token);
-//     }
-//     return tokens;
-// }
+static std::vector<std::string> splitHere(const std::string& s, char delimiter) {
+    std::vector<std::string> tokens;
+    std::string token;
+    std::istringstream tokenStream(s);
+    while (std::getline(tokenStream, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
 
 bool CommandJoin::sendNameList(IRCClient *client, IRCChannel *channel){
     std::string clients;
@@ -28,12 +27,15 @@ bool CommandJoin::sendNameList(IRCClient *client, IRCChannel *channel){
     return true;
 }
 
-void CommandJoin::handleChannel(std::map<std::string, std::string> channelKeyMap, IRCClient *client){
+void CommandJoin::handleChannel(std::vector<std::pair<std::string, std::string> > channelKeyMap, IRCClient *client){
     (void)client;
-    std::map<std::string, std::string>::iterator it;
+    for (std::vector<std::pair<std::string, std::string> >::iterator it = channelKeyMap.begin(); it != channelKeyMap.end(); it++) {
+        std::cout << "Channel: " << it->first << " Key: " << it->second << std::endl;
+    }
+    std::vector<std::pair<std::string, std::string> >::iterator it;
     it = channelKeyMap.begin();
     while (it != channelKeyMap.end()) {
-        if (it->first[0] != '#' || (it->first[0] != ':' && it->first[0] != '#') ||it->first.length() > 50){
+        if (it->first[0] != '#' || it->first.length() > 50){
             client->sendMessages(ERR_BADCHANNELNAME(client->getNickname(), client->getHostname(), it->first));
             it++;
             continue;
@@ -108,6 +110,12 @@ void CommandJoin::execute(IRCClient *client, const std::string &params)
         return client->sendMessages(ERR_NOTREGISTERED(client->getHostname(), client->getNickname()));
 
     std::vector<std::string> paramList = split(params, ' ');
+
+    for (size_t i = 0; i < paramList.size(); i++) {
+        if (paramList[i][0] == ':')
+            paramList[i] = paramList[i].substr(1, paramList[i].length());
+    }
+
     if (!paramList.empty()) {
         if (paramList.size() == 1 && paramList[0] == "0")
         {
@@ -119,21 +127,16 @@ void CommandJoin::execute(IRCClient *client, const std::string &params)
             CommandPart(server).execute(client, channels);
             return;
         }
-        std::vector<std::string> channels = split(paramList[0], ',');
+        std::vector<std::string> channels = splitHere(paramList[0], ',');
         std::vector<std::string> keys;
         if (paramList.size() > 1)
-            keys = split(paramList[1], ',');
-        std::map<std::string, std::string> channelKeyMap;
-        for (size_t i = 0; i < channels.size(); ++i) {
-            if (i < keys.size()) {
-                channelKeyMap[channels[i]] = keys[i];
-            } else {
-                channelKeyMap[channels[i]] = "";
-            }
-        }
-        if (channelKeyMap.empty()) {
-            client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "JOIN"));
-            return;
+            keys = splitHere(paramList[1], ',');
+        std::vector<std::pair<std::string, std::string> > channelKeyMap;
+        for (size_t i = 0; i < channels.size(); i++) {
+            if (keys.size() > i)
+                channelKeyMap.push_back(std::pair<std::string, std::string>(channels[i], keys[i]));
+            else
+                channelKeyMap.push_back(std::pair<std::string, std::string>(channels[i], ""));
         }
         handleChannel(channelKeyMap, client);
     } else {

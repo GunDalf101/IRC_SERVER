@@ -64,7 +64,7 @@ class CommandPass : public ICommand {
 class CommandJoin : public ICommand {
     private:
         IRCServer *server;
-        void handleChannel(std::map<std::string, std::string> channelKeyMap, IRCClient *client);
+        void handleChannel(std::vector<std::pair<std::string, std::string> > channelKeyMap, IRCClient *client);
         bool sendNameList(IRCClient *client, IRCChannel *channel);
     public:
         CommandJoin(IRCServer *server) : server(server) {}

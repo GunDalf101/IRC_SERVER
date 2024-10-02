@@ -14,9 +14,9 @@ initial_lines = [
     'pass h\r\n',
     'nick testtest\r\n',
     'nick testtestt\r\n',
-    # 'nick testtesttt\r\n',
+    'nick testtesttt\r\n',
     'user r r r r\r\n',
-    # 'join #c\r\n'
+    'join #c\r\n'
 ]
 def receive_from_server(sock):
     while True:
@@ -67,7 +67,7 @@ def main():
             
             # Join multiple channels dynamically
             for i in range(1, num_channels + 1):
-                join_cmd = f'join #c{i}\r\n'
+                join_cmd = f'join :#c{i}\r\n'
                 sock.sendall(join_cmd.encode('utf-8'))
                 print(f'Sent: {join_cmd.strip()}')
 
