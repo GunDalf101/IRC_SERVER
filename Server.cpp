@@ -120,6 +120,7 @@ void IRCServer::handleClients(int i) {
         delete clients[fds[i].fd];
         clients.erase(fds[i].fd);
         fds.erase(fds.begin() + i);
+        buffers.erase(fds[i].fd);
     }
     else if (valread < 0)
     {
