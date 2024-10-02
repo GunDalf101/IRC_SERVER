@@ -1,5 +1,5 @@
 CC = c++
-CFLAGS = -Wall -Wextra -Werror -Wshadow -Wno-shadow -std=c++98 -g3
+CFLAGS = -fsanitize=address -Wall -Wextra -Werror -Wshadow -Wno-shadow -std=c++98 -g3
 RM = rm -rf
 NAME = ircserv
 

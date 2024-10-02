@@ -119,8 +119,8 @@ void IRCServer::handleClients(int i) {
         byeBye(this, clients[fds[i].fd]);
         delete clients[fds[i].fd];
         clients.erase(fds[i].fd);
-        fds.erase(fds.begin() + i);
         buffers.erase(fds[i].fd);
+        fds.erase(fds.begin() + i);
     }
     else if (valread < 0)
     {
@@ -237,7 +237,7 @@ void IRCServer::removeChannel(std::string channelName)
     channels.erase(i);
 }
 
-void IRCServer::broadcastToChannels(std::string &sender, std::string &message)
+void IRCServer::broadcastToChannels(std::string sender, std::string message)
 {
     std::map<std::string, IRCChannel*>::iterator i;
     for (i = channels.begin(); i != channels.end(); i++)
