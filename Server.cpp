@@ -234,3 +234,10 @@ void IRCServer::removeChannel(std::string channelName)
     delete (*i).second;
     channels.erase(i);
 }
+
+void IRCServer::broadcastToChannels(std::string &sender, std::string &message)
+{
+    std::map<std::string, IRCChannel*>::iterator i;
+    for (i = channels.begin(); i != channels.end(); i++)
+        (*i).second->notifyClients(message, sender);
+}
