@@ -88,6 +88,8 @@ void IRCServer::handleConnection() {
     pfd.fd = new_fd;
     pfd.events = POLLIN;
     fcntl(new_fd, F_SETFL, O_NONBLOCK);
+    int flag = 1;
+    setsockopt(new_fd, SOL_SOCKET, SO_NOSIGPIPE, &flag, sizeof(flag));
     fds.push_back(pfd);
     IRCClient* client = new IRCClient(new_fd);
     clients[new_fd] = client;
@@ -124,13 +126,13 @@ void IRCServer::handleClients(int i) {
         buffers[i].append(buffer);
         if (buffers[i].find('\n') != std::string::npos)
         {
+            std::cout << "buffering: [" << buffers[i] << "]" << std::endl;
             std::vector<std::string> commands = split(buffers[i], '\n');
             for(size_t j = 0; j < commands.size(); j++)
             {
-                std::cout << "Received: " << commands[j] << std::endl;
                 parseCommands(commands[j], fds[i].fd);
             }
-            buffers[i].clear();
+            buffers[i].erase(0, buffers[i].find_last_of('\n') + 1);
         }
     }
 }

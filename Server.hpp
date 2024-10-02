@@ -2,7 +2,7 @@
 #include "webserv.hpp"
 #include "Client.hpp"
 #include "Channel.hpp"
-
+#include <sys/socket.h>
 std::vector<std::string> split(const std::string& s, char delimiter);
 std::vector<std::string> toReqArgs(const std::string &params);
 

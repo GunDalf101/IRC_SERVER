@@ -29,9 +29,6 @@ bool CommandJoin::sendNameList(IRCClient *client, IRCChannel *channel){
 
 void CommandJoin::handleChannel(std::vector<std::pair<std::string, std::string> > channelKeyMap, IRCClient *client){
     (void)client;
-    for (std::vector<std::pair<std::string, std::string> >::iterator it = channelKeyMap.begin(); it != channelKeyMap.end(); it++) {
-        std::cout << "Channel: " << it->first << " Key: " << it->second << std::endl;
-    }
     std::vector<std::pair<std::string, std::string> >::iterator it;
     it = channelKeyMap.begin();
     while (it != channelKeyMap.end()) {
@@ -86,7 +83,6 @@ void CommandJoin::handleChannel(std::vector<std::pair<std::string, std::string> 
         sendNameList(client, channel);
         it++;
     }
-    std::cout << std::endl;
 }
 
 static std::string getChannelsOfMember(std::map<std::string, IRCChannel*> channels, IRCClient* client)

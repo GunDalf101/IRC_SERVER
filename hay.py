@@ -59,17 +59,17 @@ def main():
             # Connect to the server
             sock.connect((server_address, server_port))
             print(f'Connected to {server_address}:{server_port}')
-            
+            reader = sock.makefile("r")
             # Send initial lines
             for line in initial_lines:
                 sock.sendall(line.encode('utf-8'))
                 print(f'Sent: {line.strip()}')
-            
             # Join multiple channels dynamically
             for i in range(1, num_channels + 1):
                 join_cmd = f'join :#c{i}\r\n'
                 sock.sendall(join_cmd.encode('utf-8'))
                 print(f'Sent: {join_cmd.strip()}')
+                print(f'got: {reader.readline()}')
 
             # Start threads for sending and receiving
             receive_thread = threading.Thread(target=receive_from_server, args=(sock,))

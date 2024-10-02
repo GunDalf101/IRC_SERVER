@@ -16,6 +16,7 @@
 #include <unistd.h>
 #include <map>
 #include <arpa/inet.h>
+#include <sys/socket.h>
 #include "CommandRpl.hpp"
 
 #endif

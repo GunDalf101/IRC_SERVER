@@ -9,7 +9,7 @@ int main(int argc, char *argv[])
             IRCServer server(port, pass);
             server.run();
         } catch (...) {
-            std::cerr << "error zomal" << std::endl;
+            std::cout << "error zomal" << std::endl;
         }
     }
     std::cerr << "Usage: " << argv[0] << " <port> <password>" << std::endl;
