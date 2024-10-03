@@ -18,7 +18,7 @@
 #define ERR_UNKNOWNCOMMAND(hostname, nick, arg) ":" + hostname + " 421 " + nick + " " + arg + " :Unknown command\r\n"
 #define ERR_NEEDMOREPARAMS(nick, hostname, cmd) ":" + hostname + " 461 " + nick + " " + cmd + " :Not enough parameters\r\n"
 #define ERR_NOSUCHCHANNEL(hostname, nick, channel) ":" + hostname + " 403 " + nick + " " + channel + " :No such channel\r\n"
-#define RPL_CHANNELMODEIS(servername, nick, channel, modes) ":" + servername + " 324 " + nick + " #" + channel + " " + modes + "\r\n"
+#define RPL_CHANNELMODEIS(servername, nick, channel, modes) ":" + servername + " 324 " + nick + " " + channel + " " + modes + "\r\n"
 #define ERR_CHANOPRIVSNEEDED(hostname, nick, chann) ":" + hostname + " 482 " + nick + " " + chann + " :You're not channel operator\r\n"
 #define ERR_USERNOTINCHANNEL(hostname, nick, chann) ":" + hostname + " 441 " + nick + " " + chann + " :They aren't on that channel\r\n"
 #define ERR_NOSUCHNICK(hostname, nick, nick2) ":" + hostname + " 401 " + nick + " " + nick2 + " :No such nick\r\n"

@@ -16,7 +16,6 @@ IRCClient::IRCClient(int client_fd) {
 }
 
 IRCClient::~IRCClient() {
-    close(client_fd);
 }
 
 void IRCClient::sendMessages(std::string response) {
@@ -25,16 +24,6 @@ void IRCClient::sendMessages(std::string response) {
     if (send(client_fd, message.c_str(), message.length(), 0) == -1) {
         std::cerr << "send() failed: " << strerror(errno) << std::endl;
     }
-}
-
-std::string IRCClient::receiveMessages() {
-    char buffer[1024] = {0};
-    int valread = read(client_fd, buffer, 1024);
-    if (valread == 0) {
-        close(client_fd);
-        return "";
-    }
-    return std::string(buffer);
 }
 
 bool IRCClient::isInvited(std::string channelName) {

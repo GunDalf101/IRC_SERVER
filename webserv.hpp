@@ -17,6 +17,7 @@
 #include <map>
 #include <arpa/inet.h>
 #include <sys/socket.h>
+#include <cctype>
 #include "CommandRpl.hpp"
 
 #endif

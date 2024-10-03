@@ -47,7 +47,7 @@ void IRCServer::run() {
 }
 
 int IRCServer::setupMainSocket(int port) {
-    int server_fd = socket(AF_INET, SOCK_STREAM, 0);
+    int server_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (server_fd == -1) {
         std::cerr << "socket() failed: " << strerror(errno) << std::endl;
         exit(1);
@@ -94,7 +94,7 @@ void IRCServer::handleConnection() {
     pollfd pfd;
     pfd.fd = new_fd;
     pfd.events = POLLIN;
-    fcntl(new_fd, F_SETFL, O_NONBLOCK);
+    // fcntl(new_fd, F_SETFL, O_NONBLOCK);
     int flag = 1;
     setsockopt(new_fd, SOL_SOCKET, SO_NOSIGPIPE, &flag, sizeof(flag));
     fds.push_back(pfd);
@@ -106,6 +106,8 @@ void IRCServer::handleConnection() {
 
 static void byeBye(IRCServer *server, IRCClient *client)
 {
+    if (!server || !client)
+        return;
     std::map<std::string, IRCChannel*> channels = server->getChannels();
     IRCChannel *c;
     for (std::map<std::string, IRCChannel*>::iterator i = channels.begin(); i != channels.end(); i++)
@@ -120,16 +122,13 @@ void IRCServer::handleClients(int i) {
     char buffer[1024];
     memset(buffer, 0, 1024);
     ssize_t valread = read(fds[i].fd, buffer, 1024 - 1);
-    if (valread == 0) {
+    if (valread <= 0) {
         byeBye(this, clients[fds[i].fd]);
         delete clients[fds[i].fd];
         clients.erase(fds[i].fd);
         buffers.erase(fds[i].fd);
         close(fds[i].fd);
         fds.erase(fds.begin() + i);
-    }
-    else if (valread < 0)
-    {
     } else {
         buffers[i].append(buffer);
         if (buffers[i].find('\n') != std::string::npos)

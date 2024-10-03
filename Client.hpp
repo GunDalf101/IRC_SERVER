@@ -41,5 +41,4 @@ class IRCClient {
 
 
         virtual void sendMessages(std::string message);
-        std::string receiveMessages();
 };

@@ -15,15 +15,17 @@ SRCS = webserv.cpp \
 		helper.cpp \
 		BOT.cpp
 
+HS   = ${shell ls *.hpp}
+
 OBJS = $(SRCS:.cpp=.o)
 
 all: $(NAME)
 
-$(NAME): $(OBJS) webserv.hpp
+$(NAME): $(OBJS) $(HS)
 	$(CC) $(CFLAGS) $(OBJS) -o $(NAME)
 	# make clean
 
-%.o: %.cpp
+%.o: %.cpp $(HS)
 	${CC} ${CFLAGS} -c $< -o $@
 
 clean:
