@@ -107,7 +107,7 @@ void CommandMode::execute(IRCClient *client, const std::string &params)
             }
             if (paramArr.size() == 1)
             {
-                replyWithChannelState(client, channel, false);
+                replyWithChannelState(client, channel, true);
             }
             else
             {
