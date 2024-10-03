@@ -122,14 +122,17 @@ void IRCServer::handleClients(int i) {
     char buffer[1024];
     memset(buffer, 0, 1024);
     ssize_t valread = read(fds[i].fd, buffer, 1024 - 1);
-    if (valread <= 0) {
+    if (valread == 0) {
         byeBye(this, clients[fds[i].fd]);
         delete clients[fds[i].fd];
         clients.erase(fds[i].fd);
         buffers.erase(fds[i].fd);
         close(fds[i].fd);
         fds.erase(fds.begin() + i);
-    } else {
+    }else if (valread < 0)  
+    {
+    }
+    else {
         buffers[i].append(buffer);
         if (buffers[i].find('\n') != std::string::npos)
         {
