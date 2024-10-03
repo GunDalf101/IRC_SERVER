@@ -63,7 +63,7 @@ int IRCServer::setupMainSocket(int port) {
         std::cerr << "setsockopt() failed: " << std::endl;
         exit(1);     
     }
-    // fcntl(server_fd, F_SETFL, O_NONBLOCK);
+    fcntl(server_fd, F_SETFL, O_NONBLOCK);
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
@@ -94,10 +94,14 @@ void IRCServer::handleConnection() {
     pollfd pfd;
     pfd.fd = new_fd;
     pfd.events = POLLIN;
-    // fcntl(new_fd, F_SETFL, O_NONBLOCK);
+    fcntl(new_fd, F_SETFL, O_NONBLOCK);
     int flag = 1;
-    setsockopt(new_fd, SOL_SOCKET, SO_NOSIGPIPE, &flag, sizeof(flag));
-    if (setsockopt(server_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(flag)) == -1)
+    if (setsockopt(new_fd, SOL_SOCKET, SO_NOSIGPIPE, &flag, sizeof(flag)) == -1)
+    {
+        std::cerr << "setsockopt() failed: " << std::endl;
+        exit(1);     
+    }
+    if (setsockopt(new_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(flag)) == -1)
     {
         std::cerr << "setsockopt() failed: " << std::endl;
         exit(1);     
@@ -142,7 +146,7 @@ void IRCServer::handleClients(int i) {
         buffers[i].append(buffer);
         if (buffers[i].find('\n') != std::string::npos)
         {
-            std::cout << "buffering: [" << buffers[i] << "]" << std::endl;
+            // std::cout << "buffering: [" << buffers[i] << "]" << std::endl;
             std::vector<std::string> commands = split(buffers[i], '\n');
             for(size_t j = 0; j < commands.size(); j++)
             {

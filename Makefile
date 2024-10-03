@@ -15,7 +15,7 @@ SRCS = webserv.cpp \
 		helper.cpp \
 		BOT.cpp
 
-HS   = ${shell ls *.hpp}
+HS   = BOT.hpp Channel.hpp Client.hpp Command.hpp CommandFactory.hpp CommandRpl.hpp Server.hpp webserv.hpp
 
 OBJS = $(SRCS:.cpp=.o)
 
