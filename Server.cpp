@@ -63,7 +63,7 @@ int IRCServer::setupMainSocket(int port) {
         std::cerr << "setsockopt() failed: " << std::endl;
         exit(1);     
     }
-    fcntl(server_fd, F_SETFL, O_NONBLOCK);
+    // fcntl(server_fd, F_SETFL, O_NONBLOCK);
     struct sockaddr_in addr;
     addr.sin_family = AF_INET;
     addr.sin_port = htons(port);
@@ -97,6 +97,11 @@ void IRCServer::handleConnection() {
     // fcntl(new_fd, F_SETFL, O_NONBLOCK);
     int flag = 1;
     setsockopt(new_fd, SOL_SOCKET, SO_NOSIGPIPE, &flag, sizeof(flag));
+    if (setsockopt(server_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(flag)) == -1)
+    {
+        std::cerr << "setsockopt() failed: " << std::endl;
+        exit(1);     
+    }
     fds.push_back(pfd);
     IRCClient* client = new IRCClient(new_fd);
     clients[new_fd] = client;
@@ -129,8 +134,9 @@ void IRCServer::handleClients(int i) {
         buffers.erase(fds[i].fd);
         close(fds[i].fd);
         fds.erase(fds.begin() + i);
-    }else if (valread < 0)  
-    {
+    }
+    else if (valread < 0)
+    { 
     }
     else {
         buffers[i].append(buffer);
@@ -147,6 +153,11 @@ void IRCServer::handleClients(int i) {
     }
 }
 
+bool ignoredCommands(std::string command)
+{
+    return !command.compare("PING") || !command.compare("PONG");
+}
+
 void IRCServer::parseCommands(std::string command, int clientFd) {
     std::stringstream ss(command);
     std::string cmd;
@@ -154,7 +165,8 @@ void IRCServer::parseCommands(std::string command, int clientFd) {
     std::string params;
     std::getline(ss, params);
     IRCClient *client = clients[clientFd];
-
+    if(ignoredCommands(cmd))
+        return;
     ICommand* commandObj = CommandFactory::createCommand(cmd, this);
     if (commandObj != NULL) {
         if(!params.empty())
