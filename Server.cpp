@@ -97,6 +97,11 @@ void IRCServer::handleConnection() {
     // fcntl(new_fd, F_SETFL, O_NONBLOCK);
     int flag = 1;
     setsockopt(new_fd, SOL_SOCKET, SO_NOSIGPIPE, &flag, sizeof(flag));
+    if (setsockopt(server_fd, IPPROTO_TCP, TCP_NODELAY, &flag, sizeof(flag)) == -1)
+    {
+        std::cerr << "setsockopt() failed: " << std::endl;
+        exit(1);     
+    }
     fds.push_back(pfd);
     IRCClient* client = new IRCClient(new_fd);
     clients[new_fd] = client;

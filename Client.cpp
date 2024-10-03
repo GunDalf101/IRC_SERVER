@@ -21,7 +21,7 @@ IRCClient::~IRCClient() {
 void IRCClient::sendMessages(std::string response) {
     std::string message = response + "\r\n";
     if (send(client_fd, message.c_str(), message.length(), 0) <= 0) {
-        std::cerr << "send() failed: " << strerror(errno) << std::endl;
+        std::cerr << "send() failed" << std::endl;
     }
 }
 
