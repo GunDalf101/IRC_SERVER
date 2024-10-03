@@ -21,6 +21,7 @@ void CommandTopic::execute(IRCClient *client, const std::string &params)
         flag = true;
         topic = topic.substr(colonPos + 1);
     }
+    topic.erase(0, topic.find_first_not_of(" "));
     IRCChannel *channel = server->getChannel(channelName);
     if (channel == NULL) {
         client->sendMessages(ERR_NOSUCHCHANNEL(client->getHostname(), client->getNickname(), channelName));
