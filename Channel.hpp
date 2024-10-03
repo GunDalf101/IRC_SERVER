@@ -14,7 +14,7 @@ enum ChannelMode {
     USER_LIMIT
 };
 
-class IRCChannel {
+class IRCChannel { 
     private:
         std::string name;
         std::string topic;
