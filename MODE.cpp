@@ -48,7 +48,7 @@ static void addResultMode(bool set, std::string& resultMode, char c)
         resultMode += setAsC;
     else
     {
-        uint i = resultMode.length() - 1;
+        int i = resultMode.length() - 1;
         while (i >= 0)
         {
             if (isModefier(resultMode[i]))
@@ -57,7 +57,7 @@ static void addResultMode(bool set, std::string& resultMode, char c)
                     resultMode += setAsC;
                 else
                     break;
-            }   
+            }
             i--;
         }
     }

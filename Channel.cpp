@@ -158,9 +158,17 @@ std::string IRCChannel::getModes(bool isOp)
     if (hasTopicProtection())
         modes += 't';
     if (hasKey() && isOp)
-        modes += getKey() + " ";
+    {
+        if (modes[modes.size() - 1] != ' ')
+            modes += " ";
+        modes += getKey();
+    }
     if (hasUserLimit())
-        modes.append(' ' + intToString(getLimit()));
+    {
+        if (modes[modes.size() - 1] != ' ')
+            modes += " ";
+        modes.append(intToString(getLimit()));
+    }
     return (modes);
 }
 
