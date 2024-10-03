@@ -72,4 +72,3 @@
 #define ERR_INVALIDKEY(hostname, nick, chann) ":" + hostname + " 696 " + nick + " " + chann + " k * :Invalid key mode parameter. Syntax: <key>.\r\n"
 
 #endif
-// :*.freenode.net 696 DSA #A k * :Invalid key mode parameter. Syntax: <key>.

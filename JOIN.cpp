@@ -39,7 +39,6 @@ void CommandJoin::handleChannel(std::vector<std::pair<std::string, std::string> 
         }
         if (server->getChannel(it->first)) {
             IRCChannel *channel = server->getChannel(it->first);
-            std::cout << "Channel mode: " << channel->getModes(true) << std::endl;
             if (channel->getClient(client->getNickname())) {
                 client->sendMessages(ERR_USERONCHANNEL(client->getHostname(), client->getNickname(), client->getNickname(), it->first));
                 it++;

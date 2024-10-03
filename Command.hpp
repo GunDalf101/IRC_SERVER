@@ -133,10 +133,6 @@ class CommandTopic : public ICommand {
         }
 };
 
-// NOTE: ideally all these methods should be Interface defined including the constructor
-//      so that we get rid of these argument type being ptr or ref inconsistencies among
-//      classes that implements the same interface ICommand.
-//      ICommand should favor ref over ptr.
 class CommandMode : public ICommand {
     private:
         IRCServer &server;

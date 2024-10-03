@@ -146,7 +146,6 @@ void IRCServer::handleClients(int i) {
         buffers[i].append(buffer);
         if (buffers[i].find('\n') != std::string::npos)
         {
-            // std::cout << "buffering: [" << buffers[i] << "]" << std::endl;
             std::vector<std::string> commands = split(buffers[i], '\n');
             for(size_t j = 0; j < commands.size(); j++)
             {
@@ -174,20 +173,18 @@ void IRCServer::parseCommands(std::string command, int clientFd) {
     ICommand* commandObj = CommandFactory::createCommand(cmd, this);
     if (commandObj != NULL) {
         if(!params.empty())
-            params = params.substr(1, params.length()); // this for removing the space after the command
+            params = params.substr(1, params.length());
         if (params[params.length() - 1] == '\r')
             params = params.substr(0, params.length() - 1);
         commandObj->execute(client, params);
         delete commandObj;
     } else {
-        std::cout << "Unknown command: " << cmd << std::endl;
         client->sendMessages(ERR_UNKNOWNCOMMAND(client->getHostname(), client->getNickname(), cmd));
     }
 }
 
 void IRCServer::sendResponse(int client_fd, std::string response) {
     std::string message = response + "\r\n";
-    std::cout << "send : " << message << "\r\n";
     send(client_fd, message.c_str(), message.length(), 0);
 }
 
@@ -218,7 +215,6 @@ std::map<int, IRCClient*> IRCServer::getCliens()
 IRCClient* IRCServer::getClientByNickname(std::string nickname) {
     std::map<int, IRCClient*>::iterator it = clients.begin();
     while (it != clients.end()) {
-        // std::cout << it->second->getNickname() << std::endl;
         if (it->second->getNickname() == nickname) {
             return it->second;
         }

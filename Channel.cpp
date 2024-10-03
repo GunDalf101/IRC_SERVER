@@ -25,12 +25,6 @@ void IRCChannel::addMember(IRCClient *client)
     notifyClients(client->getNickname() + " has joined the channel.", client->getNickname());
 }
 
-// void IRCChannel::removeMember(IRCClient *client)
-// {
-//     users.erase(std::remove(users.begin(), users.end(), client), users.end());
-//     members.erase(std::remove(members.begin(), members.end(), client), members.end());
-//     notifyClients(client->getNickname() + " has left the channel.", client->getNickname());
-// }
 
 void IRCChannel::notifyClients(std::string message, std::string sender)
 {
@@ -53,12 +47,6 @@ void IRCChannel::addOperator(IRCClient *client)
     operators.push_back(client);
 }
 
-// void IRCChannel::removeOperator(IRCClient *client)
-// {
-//     operators.erase(std::remove(operators.begin(), operators.end(), client), operators.end());
-//     users.erase(std::remove(users.begin(), users.end(), client), users.end());
-// }
-
 void IRCChannel::removeMember(IRCClient *client)
 {
     std::vector<IRCClient*>::iterator i = std::find(users.begin(), users.end(), client);
@@ -76,10 +64,6 @@ void IRCChannel::removeMember(IRCClient *client)
 }
 
 IRCClient *IRCChannel::getClient(std::string nickname) {
-    //print all members
-    // for (std::vector<IRCClient *>::iterator it = members.begin(); it != members.end(); it++) {
-    //     std::cout << (*it)->getNickname() << std::endl;
-    // }
     for (std::vector<IRCClient *>::iterator it = users.begin(); it != users.end(); it++) {
         if ((*it)->getNickname() == nickname)
             return *it;
@@ -92,7 +76,6 @@ IRCClient *IRCChannel::getOperator(std::string nickname) {
         if ((*it)->getNickname() == nickname)
             return *it;
     }
-    std::cout << "not op" << std::endl;
     return NULL;
 }
 

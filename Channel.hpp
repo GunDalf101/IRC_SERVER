@@ -19,13 +19,11 @@ class IRCChannel {
         std::string name;
         std::string topic;
         std::string type;
-        // ChannelMode mode;
         std::string key;
         int userLimit;
-        std::vector<IRCClient *> users; // all  users
-        std::vector<IRCClient *> members; // non op
+        std::vector<IRCClient *> users;
+        std::vector<IRCClient *> members;
         std::vector<IRCClient *> operators; 
-    //    std::map<IRCClient *, bool> user_pairs;   to review
         std::string creationTime;
         bool _inviteOnly;
         bool _hasKey;
@@ -40,7 +38,6 @@ class IRCChannel {
         void addOperator(IRCClient *client);
         void removeOperator(IRCClient *client);
         void removeMember(IRCClient *client);
-        // void removeMember(IRCClient *client);
         void notifyClients(std::string message, std::string sender);
         bool isClientExists(const std::string &nickname);
         std::string getName() { return name; }
