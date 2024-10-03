@@ -30,7 +30,7 @@ void IRCServer::run() {
     while (true) {
         int ret = poll(fds.data(), fds.size(), -1);
         if (ret == -1) {
-            std::cerr << "poll() failed: " << strerror(errno) << std::endl;
+            std::cerr << "poll() failed: " << std::endl;
             return;
         }
 
@@ -49,18 +49,18 @@ void IRCServer::run() {
 int IRCServer::setupMainSocket(int port) {
     int server_fd = socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
     if (server_fd == -1) {
-        std::cerr << "socket() failed: " << strerror(errno) << std::endl;
+        std::cerr << "socket() failed: " << std::endl;
         exit(1);
     }
 
     int opt = 1;
     if (setsockopt(server_fd, SOL_SOCKET, SO_REUSEADDR, &opt, sizeof(opt)) == -1) {
-        std::cerr << "setsockopt() failed: " << strerror(errno) << std::endl;
+        std::cerr << "setsockopt() failed: " << std::endl;
         exit(1);
     }
     if (setsockopt(server_fd, IPPROTO_TCP, TCP_NODELAY, &opt, sizeof(opt)) == -1)
     {
-        std::cerr << "setsockopt() failed: " << strerror(errno) << std::endl;
+        std::cerr << "setsockopt() failed: " << std::endl;
         exit(1);     
     }
     fcntl(server_fd, F_SETFL, O_NONBLOCK);
@@ -69,12 +69,12 @@ int IRCServer::setupMainSocket(int port) {
     addr.sin_port = htons(port);
     addr.sin_addr.s_addr = INADDR_ANY;
     if (bind(server_fd, (struct sockaddr*)&addr, sizeof(addr)) == -1) {
-        std::cerr << "bind() failed: " << strerror(errno) << std::endl;
+        std::cerr << "bind() failed: " << std::endl;
         exit(1);
     }
 
     if (listen(server_fd, 128) == -1) {
-        std::cerr << "listen() failed: " << strerror(errno) << std::endl;
+        std::cerr << "listen() failed: " << std::endl;
         exit(1);
     }
 
@@ -87,7 +87,7 @@ void IRCServer::handleConnection() {
     int new_fd = accept(server_fd, (struct sockaddr*)&client_addr, &client_addrlen);
     char ipCli[INET_ADDRSTRLEN];
     if (new_fd == -1) {
-        std::cerr << "accept() failed: " << strerror(errno) << std::endl;
+        std::cerr << "accept() failed: " << std::endl;
         return;
     }
     inet_ntop(AF_INET, &client_addr.sin_addr, ipCli, INET_ADDRSTRLEN);
