@@ -36,7 +36,7 @@ void IRCChannel::notifyClients(std::string message, std::string sender)
 {
     for (std::vector<IRCClient *>::iterator it = users.begin(); it != users.end(); it++)
         if (sender != (*it)->getNickname())
-            (*it)->sendMessages(message);
+            (void)message;
 }
 
 bool IRCChannel::isClientExists(const std::string &nickname)

@@ -64,7 +64,6 @@ void CommandJoin::handleChannel(std::vector<std::pair<std::string, std::string> 
                 client->removeInvite(channel->getName());
             channel->addMember(client);
         }
-
         if (!server->getChannel(it->first)) {
             server->createChannel(it->first);
             IRCChannel *channel = server->getChannel(it->first);
@@ -72,7 +71,6 @@ void CommandJoin::handleChannel(std::vector<std::pair<std::string, std::string> 
             if (!it->second.empty())
                 channel->setKey(it->second);
         }
-
         IRCChannel *channel = server->getChannel(it->first);
 
         client->sendMessages(RPL_JOIN(client->getNickname(), client->getUsername(), it->first, client->getIpAddr()));
