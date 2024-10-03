@@ -41,5 +41,4 @@ void CommandInvite::execute(IRCClient *client, const std::string &params)
     invitedClient->invite(channelName);
     client->sendMessages(RPL_INVITING(client->getHostname(), client->getNickname(), invitedClient->getNickname(), channelName));
     invitedClient->sendMessages(RPL_INVITE(client->getNickname(), client->getUsername(), invitedClient->getHostname(), channelName, invitedClient->getNickname()));
-    
 }

@@ -39,9 +39,11 @@ void CommandTopic::execute(IRCClient *client, const std::string &params)
             }
             channel->setTopic("");
         }
-        if (channel->getTopic().empty()) 
-            client->sendMessages(RPL_NOTOPIC(client->getHostname(), client->getNickname(), channelName));
-        else
+        if (channel->getTopic().empty()) {
+            client->sendMessages(RPL_NOTOPIC(client->getHostname(),  client->getNickname(), channelName));
+            channel->notifyClients(RPL_NOTOPIC(client->getHostname(),  client->getNickname(), channelName), client->getNickname());
+        }
+        else 
             client->sendMessages(RPL_TOPIC(client->getHostname(), client->getNickname(), channelName, channel->getTopic()));
         return;
     }
