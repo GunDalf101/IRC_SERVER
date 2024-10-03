@@ -157,6 +157,11 @@ void IRCServer::handleClients(int i) {
     }
 }
 
+bool ignoredCommands(std::string command)
+{
+    return !command.compare("PING") || !command.compare("PONG");
+}
+
 void IRCServer::parseCommands(std::string command, int clientFd) {
     std::stringstream ss(command);
     std::string cmd;
@@ -164,7 +169,8 @@ void IRCServer::parseCommands(std::string command, int clientFd) {
     std::string params;
     std::getline(ss, params);
     IRCClient *client = clients[clientFd];
-
+    if(ignoredCommands(cmd))
+        return;
     ICommand* commandObj = CommandFactory::createCommand(cmd, this);
     if (commandObj != NULL) {
         if(!params.empty())
