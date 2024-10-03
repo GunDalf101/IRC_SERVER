@@ -28,7 +28,7 @@ void CommandInvite::execute(IRCClient *client, const std::string &params)
         client->sendMessages(ERR_NOSUCHNICK(client->getHostname(), client->getNickname(), nickname));
         return;
     }
-    if (!channel->getOperator(client->getNickname()))
+    if (!channel->getOperator(client->getNickname()) && channel->isInviteOnly())
     {
         client->sendMessages(ERR_CHANOPRIVSNEEDED(client->getHostname(), client->getNickname(), channelName));
         return;
