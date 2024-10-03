@@ -2,13 +2,19 @@
 
 void CommandInvite::execute(IRCClient *client, const std::string &params)
 {
-    std::string nickname;
-    std::string channelName;
-    std::stringstream paramsStream(params);
-    paramsStream >> nickname >> channelName;
 
+    std::vector<std::string> paramsVector = toReqArgs(params);
     if(!client->isAuthentificated())
         return client->sendMessages(ERR_NOTREGISTERED(client->getHostname(), client->getNickname()));
+    if (paramsVector.size() < 2)
+    {
+        client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "INVITE"));
+        return;
+    }
+    std::string nickname;
+    std::string channelName;
+    nickname = paramsVector[0];
+    channelName = paramsVector[1];
 
     IRCChannel *channel = server->getChannel(channelName);
     if (channel == NULL)
@@ -34,6 +40,6 @@ void CommandInvite::execute(IRCClient *client, const std::string &params)
     }
     invitedClient->invite(channelName);
     client->sendMessages(RPL_INVITING(client->getHostname(), client->getNickname(), invitedClient->getNickname(), channelName));
-    invitedClient->sendMessages(RPL_INVITE(client->getNickname(), invitedClient->getUsername(), invitedClient->getHostname(), channelName));
+    invitedClient->sendMessages(RPL_INVITE(client->getNickname(), client->getUsername(), invitedClient->getHostname(), channelName, invitedClient->getNickname()));
     
 }

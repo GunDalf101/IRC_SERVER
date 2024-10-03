@@ -6,6 +6,10 @@ void CommandTopic::execute(IRCClient *client, const std::string &params)
     std::string topic;
     std::stringstream paramsStream(params);
     paramsStream >> channelName;
+    if (channelName.empty()) {
+        client->sendMessages(ERR_NEEDMOREPARAMS(client->getNickname(), client->getHostname(), "TOPIC"));
+        return;
+    }
     std::getline(paramsStream, topic);
 
     if(!client->isAuthentificated())
@@ -36,5 +40,6 @@ void CommandTopic::execute(IRCClient *client, const std::string &params)
         return;
     }
     channel->setTopic(topic);
+    client->sendMessages(RPL_TOPIC(client->getHostname(), client->getNickname(), channelName, topic));
     channel->notifyClients(RPL_TOPIC(client->getHostname(), client->getNickname(), channelName, topic), client->getNickname());
 }

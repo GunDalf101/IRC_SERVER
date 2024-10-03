@@ -231,7 +231,7 @@ void CommandPrivMsg::execute(IRCClient *client, const std::string &params)
             if(rcvChannel == NULL)
                 client->sendMessages(ERR_NOSUCHCHANNEL(client->getHostname(), client->getNickname(), target));
             else if(!rcvChannel->isClientExists(client->getNickname()))
-                client->sendMessages(ERR_CANNOTSENDTOCHAN(client->getHostname(), client->getNickname(), target));
+                client->sendMessages(ERR_NOTONCHANNEL(client->getHostname(), target));
             else
                 rcvChannel->notifyClients(PRIVMSG_FORMAT(client->getNickname(), client->getUsername(), client->getHostname(), target, message), client->getNickname());
         } else {
