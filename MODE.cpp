@@ -57,7 +57,7 @@ static void addResultMode(bool set, std::string& resultMode, char c)
                     resultMode += setAsC;
                 else
                     break;
-            }   
+            }
             i--;
         }
     }
