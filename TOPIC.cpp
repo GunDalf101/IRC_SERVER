@@ -20,6 +20,9 @@ void CommandTopic::execute(IRCClient *client, const std::string &params)
     if (colonPos != std::string::npos) {
         flag = true;
         topic = topic.substr(colonPos + 1);
+    } else {
+        std::stringstream ss(topic);
+        ss >> topic;
     }
     topic.erase(0, topic.find_first_not_of(" "));
     IRCChannel *channel = server->getChannel(channelName);
