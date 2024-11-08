@@ -40,7 +40,7 @@ This IRC server was built using:
 
 1. **Clone the Repository**:
    ```bash
-   git clone https://github.com/yourusername/ft_irc.git
+   git clone https://github.com/GunDalf101/IRC_SERVER.git
    cd ft_irc
  
 2. Build and Run the Server:
