@@ -48,6 +48,7 @@ This IRC server was built using:
   make && ./ircserv <port> <server_password>
   ```
 ```<port>```: The port number the server will listen on for incoming connections.
+
 ```<server_password>```: Password required by clients to connect.
 ## Compatibility
 Compatible with Unix-like systems, including macOS (with ```fcntl``` for non-blocking I/O compatibility).
